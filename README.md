@@ -75,6 +75,8 @@ The only configuration you need to do in CSS is setting a width for the `.vue-af
     <a href="#contact">Contact</a>
 </affix>
 ```
+
+### Props
 ``` javascript
 /**
  * The relative element selector string. The relative element is
