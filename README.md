@@ -58,8 +58,11 @@ Those can be catched as I show in the example below:
 
 ## How the plugin works
 It works similar to Bootstrap's Affix plugin, it will add 3 classes (`.affix-top`, `.affix` and `.affix-bottom`) to the element to affix while you scroll the page.
+
 Unlike Bootstrap's Affix, all you need to do in vue-affix is set a width value for the class `.vue-affix` (that's because when the `position: fixed` property is applied, it will lose it's relative width value) and add an element in the `relative-element-selector` property.
+
 vue-affix will calculate when to start/stop affixing relatively to the element you provide in the `relative-element-selector` property, that means you don't have to do any calculation, just set the relative element and that will be all done automatically.
+
 You can also set an offset object with the top and bottom values that will be used as a threshold to start/stop affixing the element, but that is optional.
 
 ## Configuration
