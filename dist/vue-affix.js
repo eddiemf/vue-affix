@@ -662,7 +662,7 @@ exports.default = {
         onScroll: function onScroll() {
             var distanceFromTop = window.scrollY;
 
-            if (distanceFromTop < this.relativeElement.offsetTop - this.offset.top) {
+            if (distanceFromTop < this.getPosition(this.relativeElement).y - this.offset.top) {
                 this.currentState = 'affix-top';
 
                 if (this.currentState != this.lastState) {
@@ -674,7 +674,8 @@ exports.default = {
                 }
             }
 
-            if (distanceFromTop >= this.relativeElement.offsetTop - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
+            console.log(this.getPosition(this.relativeElement).y);
+            if (distanceFromTop >= this.getPosition(this.relativeElement).y - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                 this.currentState = 'affix';
                 this.$el.style.top = this.affixedElmMarginTop + 'px';
 
@@ -702,15 +703,27 @@ exports.default = {
             }
 
             this.lastState = this.currentState;
+        },
+        getPosition: function getPosition(element) {
+            var xPosition = 0;
+            var yPosition = 0;
+
+            while (element) {
+                xPosition += element.offsetLeft;
+                yPosition += element.offsetTop;
+                element = element.offsetParent;
+            }
+
+            return { x: xPosition, y: yPosition };
         }
     },
 
     mounted: function mounted() {
         this.$el.classList.add('vue-affix');
 
-        this.affixedElmOffsetTop = this.$el.offsetTop;
-        this.affixedElmMarginTop = this.affixedElmOffsetTop - this.relativeElement.offsetTop + this.offset.top;
-        this.relativeElmEnd = this.relativeElement.offsetHeight + this.relativeElement.offsetTop;
+        this.affixedElmOffsetTop = this.getPosition(this.$el).y;
+        this.affixedElmMarginTop = this.affixedElmOffsetTop - this.getPosition(this.relativeElement).y + this.offset.top;
+        this.relativeElmEnd = this.relativeElement.offsetHeight + this.getPosition(this.relativeElement).y;
 
         this.onScroll();
         document.addEventListener('scroll', this.onScroll);
