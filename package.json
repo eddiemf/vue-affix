@@ -1,0 +1,53 @@
+{
+  "name": "vue-affix",
+  "version": "0.1.1",
+  "title": "Vue Affix",
+  "description": "A Vue.js plugin that affixes an element in the window while you scroll, similar to Bootstrap Affix but much simpler",
+  "main": "dist/vue-affix.js",
+  "scripts": {
+    "dev": "webpack --progress --hide-modules",
+    "watch": "webpack --progress --hide-modules --watch",
+    "prod": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "demo": "webpack --progress --hide-modules --config='build/webpack.demos.config.js'",
+    "watch-demo": "webpack --progress --hide-modules --watch --config='build/webpack.demos.config.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eddiemf/vue-affix.git"
+  },
+  "keywords": [
+    "vue-affix",
+    "affix",
+    "sticky",
+    "vue-sticky",
+    "vue",
+    "vue-plugin",
+    "vue-component",
+    "scroll"
+  ],
+  "author": {
+    "name": "Mauricio Farias Dziedzinski",
+    "email": "d.mauriciofarias@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eddiemf/vue-affix/issues"
+  },
+  "homepage": "https://github.com/eddiemf/vue-affix#readme",
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-runtime": "^6.23.0",
+    "cross-env": "^5.0.1",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "vue-html-loader": "^1.2.4",
+    "vue-loader": "^12.2.1",
+    "webpack": "^3.0.0"
+  }
+}
