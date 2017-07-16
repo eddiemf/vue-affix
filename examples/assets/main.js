@@ -169,27 +169,34 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__affix_vue__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__affix_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__affix_vue__);
 
 
-const Plugin = {};
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
-Plugin.install = Vue => {
+var _affix = __webpack_require__(1);
+
+var _affix2 = _interopRequireDefault(_affix);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Plugin = {};
+
+Plugin.install = function (Vue) {
 	if (Plugin.install.installed) return;
 
-	Vue.component("affix", __WEBPACK_IMPORTED_MODULE_0__affix_vue___default.a);
+	Vue.component("affix", _affix2.default);
 };
 
 if (typeof window !== 'undefined' && window.Vue) {
 	Plugin.install(window.Vue);
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (Plugin);
+exports.default = Plugin;
 
 /***/ }),
 /* 1 */
@@ -198,13 +205,13 @@ if (typeof window !== 'undefined' && window.Vue) {
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(5)
+  __webpack_require__(2)
 }
-var Component = __webpack_require__(2)(
+var Component = __webpack_require__(7)(
   /* script */
-  __webpack_require__(3),
+  __webpack_require__(8),
   /* template */
-  __webpack_require__(4),
+  __webpack_require__(9),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -237,255 +244,16 @@ module.exports = Component.exports
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// this module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        /**
-         * The relative element selector string. The relative element is
-         * the element you want your affix to be related to, as it will
-         * not be related to the window.
-         *
-         * @example '#contact'
-         * @type {String}
-         */
-        relativeElementSelector: {
-            type: String,
-            required: true
-        },
-
-        /**
-         * This is the offset margin between the top/bottom of the window
-         * before the affix is applied.
-         *
-         * @type {Object}
-         */
-        offset: {
-            type: Object,
-            default: () => {
-                return {
-                    top: 40,
-                    bottom: 40
-                };
-            }
-        }
-    },
-
-    computed: {
-        /**
-         * Computes the relative element selector to a selector.
-         *
-         * @return {Element} document.querySelector(this.relativeElementSelector)
-         */
-        relativeElement() {
-            return document.querySelector(this.relativeElementSelector);
-        }
-    },
-
-    data() {
-        return {
-            elementDistanceFromTop: null,
-            elementEnd: null,
-            lastState: null,
-            currentState: null
-        };
-    },
-
-    methods: {
-        onScroll() {
-            let distanceFromTop = window.scrollY;
-
-            if (distanceFromTop < this.elementDistanceFromTop - this.offset.top) {
-                this.currentState = 'affix-top';
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affixtop');
-
-                    this.$el.classList.remove('affix');
-                    this.$el.classList.add('affix-top');
-                }
-            }
-
-            if (distanceFromTop >= this.elementDistanceFromTop - this.offset.top && distanceFromTop < this.elementEnd - this.offset.top) {
-                this.currentState = 'affix';
-                this.$el.style.top = `${this.offset.top}px`;
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affix');
-
-                    this.$el.classList.remove('affix-top');
-                    this.$el.classList.remove('affix-bottom');
-                    this.$el.classList.add('affix');
-                }
-            }
-
-            if (distanceFromTop >= this.elementEnd - this.offset.top) {
-                this.currentState = 'affix-bottom';
-                this.$el.style.top = `${this.elementEnd - distanceFromTop}px`;
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affixbottom');
-
-                    this.$el.classList.remove('affix');
-                    this.$el.classList.add('affix-bottom');
-                }
-            }
-
-            this.lastState = this.currentState;
-        }
-    },
-
-    mounted() {
-        this.$el.classList.add('vue-affix');
-        this.elementDistanceFromTop = this.relativeElement.offsetTop;
-        let elementBottomDistanceFromTop = this.relativeElement.offsetHeight + this.elementDistanceFromTop;
-        this.elementEnd = elementBottomDistanceFromTop - this.$el.offsetHeight - this.offset.bottom;
-
-        this.onScroll();
-        document.addEventListener('scroll', this.onScroll);
-    },
-
-    beforeDestroy() {
-        document.removeEventListener('scroll', this.onScroll);
-    }
-});
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_vm._t("default")], 2)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-714a56fe", module.exports)
-  }
-}
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(6);
+var content = __webpack_require__(3);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(8)("1cea1b81", content, false);
+var update = __webpack_require__(5)("1cea1b81", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -501,10 +269,10 @@ if(false) {
 }
 
 /***/ }),
-/* 6 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(4)(undefined);
 // imports
 
 
@@ -515,7 +283,7 @@ exports.push([module.i, "\n.affix {\n    position: fixed;\n}\n.affix-bottom {\n 
 
 
 /***/ }),
-/* 7 */
+/* 4 */
 /***/ (function(module, exports) {
 
 /*
@@ -597,7 +365,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 8 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -616,7 +384,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(9)
+var listToStyles = __webpack_require__(6)
 
 /*
 type StyleObject = {
@@ -818,7 +586,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, exports) {
 
 /**
@@ -849,6 +617,251 @@ module.exports = function listToStyles (parentId, list) {
   return styles
 }
 
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// this module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//
+//
+//
+//
+//
+//
+
+exports.default = {
+    props: {
+        /**
+         * The relative element selector string. The relative element is
+         * the element you want your affix to be related to, as it will
+         * not be related to the window.
+         *
+         * @example '#contact'
+         * @type {String}
+         */
+        relativeElementSelector: {
+            type: String,
+            required: true
+        },
+
+        /**
+         * This is the offset margin between the top/bottom of the window
+         * before the affix is applied.
+         *
+         * @type {Object}
+         */
+        offset: {
+            type: Object,
+            default: function _default() {
+                return {
+                    top: 40,
+                    bottom: 40
+                };
+            }
+        }
+    },
+
+    computed: {
+        /**
+         * Computes the relative element selector to a selector.
+         *
+         * @return {Element} document.querySelector(this.relativeElementSelector)
+         */
+        relativeElement: function relativeElement() {
+            return document.querySelector(this.relativeElementSelector);
+        }
+    },
+
+    data: function data() {
+        return {
+            affixedElmOffsetTop: null,
+            affixedElmMarginTop: null,
+            relativeElmEnd: null,
+            lastState: null,
+            currentState: null
+        };
+    },
+
+
+    methods: {
+        onScroll: function onScroll() {
+            var distanceFromTop = window.scrollY;
+
+            if (distanceFromTop < this.relativeElement.offsetTop - this.offset.top) {
+                this.currentState = 'affix-top';
+
+                if (this.currentState != this.lastState) {
+                    // To make sure it will not fire right after component is mounted
+                    if (this.lastState) this.$emit('affixtop');
+
+                    this.$el.classList.remove('affix');
+                    this.$el.classList.add('affix-top');
+                }
+            }
+
+            if (distanceFromTop >= this.relativeElement.offsetTop - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
+                this.currentState = 'affix';
+                this.$el.style.top = this.affixedElmMarginTop + 'px';
+
+                if (this.currentState != this.lastState) {
+                    // To make sure it will not fire right after component is mounted
+                    if (this.lastState) this.$emit('affix');
+
+                    this.$el.classList.remove('affix-top');
+                    this.$el.classList.remove('affix-bottom');
+                    this.$el.classList.add('affix');
+                }
+            }
+
+            if (distanceFromTop >= this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
+                this.currentState = 'affix-bottom';
+                this.$el.style.top = this.relativeElmEnd - this.offset.bottom - this.$el.offsetHeight - distanceFromTop + 'px';
+
+                if (this.currentState != this.lastState) {
+                    // To make sure it will not fire right after component is mounted
+                    if (this.lastState) this.$emit('affixbottom');
+
+                    this.$el.classList.remove('affix');
+                    this.$el.classList.add('affix-bottom');
+                }
+            }
+
+            this.lastState = this.currentState;
+        }
+    },
+
+    mounted: function mounted() {
+        this.$el.classList.add('vue-affix');
+
+        this.affixedElmOffsetTop = this.$el.offsetTop;
+        this.affixedElmMarginTop = this.affixedElmOffsetTop - this.relativeElement.offsetTop + this.offset.top;
+        this.relativeElmEnd = this.relativeElement.offsetHeight + this.relativeElement.offsetTop;
+
+        this.onScroll();
+        document.addEventListener('scroll', this.onScroll);
+    },
+    beforeDestroy: function beforeDestroy() {
+        document.removeEventListener('scroll', this.onScroll);
+    }
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_vm._t("default")], 2)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-714a56fe", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

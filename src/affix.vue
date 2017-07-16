@@ -50,8 +50,9 @@
 
         data() {
             return {
-                elementDistanceFromTop: null,
-                elementEnd: null,
+                affixedElmOffsetTop: null,
+                affixedElmMarginTop: null,
+                relativeElmEnd: null,
                 lastState: null,
                 currentState: null
             }
@@ -61,7 +62,7 @@
             onScroll() {
                 let distanceFromTop = window.scrollY;
 
-                if (distanceFromTop < this.elementDistanceFromTop - this.offset.top) {
+                if (distanceFromTop < this.relativeElement.offsetTop - this.offset.top) {
                     this.currentState = 'affix-top';
 
                     if (this.currentState != this.lastState) {
@@ -73,9 +74,9 @@
                     }
                 }
 
-                if (distanceFromTop >= this.elementDistanceFromTop - this.offset.top && distanceFromTop < this.elementEnd - this.offset.top) {
+                if (distanceFromTop >= this.relativeElement.offsetTop - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                     this.currentState = 'affix';
-                    this.$el.style.top = `${this.offset.top}px`;
+                    this.$el.style.top = `${this.affixedElmMarginTop}px`;
 
                     if (this.currentState != this.lastState) {
                         // To make sure it will not fire right after component is mounted
@@ -87,9 +88,9 @@
                     }
                 }
 
-                if (distanceFromTop >= this.elementEnd - this.offset.top) {
+                if (distanceFromTop >= this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                     this.currentState = 'affix-bottom';
-                    this.$el.style.top = `${this.elementEnd - distanceFromTop}px`;
+                    this.$el.style.top = `${this.relativeElmEnd - this.offset.bottom - this.$el.offsetHeight -  distanceFromTop}px`;
 
                     if (this.currentState != this.lastState) {
                         // To make sure it will not fire right after component is mounted
@@ -106,9 +107,10 @@
 
         mounted() {
             this.$el.classList.add('vue-affix');
-            this.elementDistanceFromTop = this.relativeElement.offsetTop;
-            let elementBottomDistanceFromTop = this.relativeElement.offsetHeight + this.elementDistanceFromTop;
-            this.elementEnd = elementBottomDistanceFromTop - this.$el.offsetHeight - this.offset.bottom;
+
+            this.affixedElmOffsetTop = this.$el.offsetTop;
+            this.affixedElmMarginTop = this.affixedElmOffsetTop - this.relativeElement.offsetTop + this.offset.top;
+            this.relativeElmEnd = this.relativeElement.offsetHeight + this.relativeElement.offsetTop;
 
             this.onScroll();
             document.addEventListener('scroll', this.onScroll);
