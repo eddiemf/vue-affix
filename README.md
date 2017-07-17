@@ -8,7 +8,7 @@ This vue 2 component will act kinda like Bootstrap's Affix plugin, but in a simp
  - Vue2
  - Uses pure JS!
 
-Check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html">DEMO</a>!
+Check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html" target="_blank">demo</a>!
 
 ## Installation
 Install via npm and use it as a vue plugin in your app.
