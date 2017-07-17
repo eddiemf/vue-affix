@@ -674,7 +674,6 @@ exports.default = {
                 }
             }
 
-            console.log(this.getPosition(this.relativeElement).y);
             if (distanceFromTop >= this.getPosition(this.relativeElement).y - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                 this.currentState = 'affix';
                 this.$el.style.top = this.affixedElmMarginTop + 'px';
