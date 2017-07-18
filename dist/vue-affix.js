@@ -633,6 +633,18 @@ exports.default = {
                     bottom: 40
                 };
             }
+        },
+
+        /**
+         * Checks if the plugin should be enabled/disabled based
+         * on true/false, good for conditional rendering like
+         * mobile behavior.
+         *
+         * @type {Boolean}
+         */
+        enabled: {
+            type: Boolean,
+            default: true
         }
     },
 
@@ -660,6 +672,11 @@ exports.default = {
 
     methods: {
         onScroll: function onScroll() {
+            if (!this.enabled) {
+                this.removeClasses();
+                return;
+            }
+
             var distanceFromTop = window.scrollY;
 
             if (this.$el.offsetHeight + this.offset.top > this.relativeElement.offsetHeight) {
