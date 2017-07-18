@@ -756,6 +756,10 @@ exports.default = {
         onScroll: function onScroll() {
             var distanceFromTop = window.scrollY;
 
+            if (this.$el.offsetHeight + this.offset.top > this.relativeElement.offsetHeight) {
+                return;
+            }
+
             if (distanceFromTop < this.getPosition(this.relativeElement).y - this.offset.top) {
                 this.currentState = 'affix-top';
 
@@ -763,12 +767,10 @@ exports.default = {
                     // To make sure it will not fire right after component is mounted
                     if (this.lastState) this.$emit('affixtop');
 
-                    this.$el.classList.remove('affix');
+                    this.removeClasses();
                     this.$el.classList.add('affix-top');
                 }
-            }
-
-            if (distanceFromTop >= this.getPosition(this.relativeElement).y - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
+            } else if (distanceFromTop >= this.getPosition(this.relativeElement).y - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                 this.currentState = 'affix';
                 this.$el.style.top = this.affixedElmMarginTop + 'px';
 
@@ -776,13 +778,10 @@ exports.default = {
                     // To make sure it will not fire right after component is mounted
                     if (this.lastState) this.$emit('affix');
 
-                    this.$el.classList.remove('affix-top');
-                    this.$el.classList.remove('affix-bottom');
+                    this.removeClasses();
                     this.$el.classList.add('affix');
                 }
-            }
-
-            if (distanceFromTop >= this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
+            } else if (distanceFromTop >= this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
                 this.currentState = 'affix-bottom';
                 this.$el.style.top = this.relativeElmEnd - this.offset.bottom - this.$el.offsetHeight - distanceFromTop + 'px';
 
@@ -790,12 +789,17 @@ exports.default = {
                     // To make sure it will not fire right after component is mounted
                     if (this.lastState) this.$emit('affixbottom');
 
-                    this.$el.classList.remove('affix');
+                    this.removeClasses();
                     this.$el.classList.add('affix-bottom');
                 }
             }
 
             this.lastState = this.currentState;
+        },
+        removeClasses: function removeClasses() {
+            this.$el.classList.remove('affix-top');
+            this.$el.classList.remove('affix');
+            this.$el.classList.remove('affix-bottom');
         },
         getPosition: function getPosition(element) {
             var xPosition = 0;
