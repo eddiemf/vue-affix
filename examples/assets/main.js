@@ -84,7 +84,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Vue.use(__WEBPACK_IMPORTED_MODULE_0__dist_vue_affix_js___default.a);
 
 const app = new Vue({
-	el: '#app'
+	el: '#app',
+
+    methods: {
+        condition() {
+            if (window.innerWidth >= 1200) return true;
+            return false;
+        }
+    }
 });
 
 
@@ -727,6 +734,18 @@ exports.default = {
                     bottom: 40
                 };
             }
+        },
+
+        /**
+         * Checks if the plugin should be enabled/disabled based
+         * on true/false, good for conditional rendering like
+         * mobile behavior.
+         *
+         * @type {Boolean}
+         */
+        enabled: {
+            type: Boolean,
+            default: true
         }
     },
 
@@ -754,6 +773,11 @@ exports.default = {
 
     methods: {
         onScroll: function onScroll() {
+            if (!this.enabled) {
+                this.removeClasses();
+                return;
+            }
+
             var distanceFromTop = window.scrollY;
 
             if (this.$el.offsetHeight + this.offset.top > this.relativeElement.offsetHeight) {
