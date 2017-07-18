@@ -70,7 +70,7 @@ You can also set an offset object with the top and bottom values that will be us
 ## Configuration
 The only configuration you need to do in CSS is setting a width for the `.vue-affix` class, the rest will be applied through props as in the example below:
 ``` html
-<affix class="sidebar" relative-element-selector="#home" :offset="{ top: 40, bottom: 40}">
+<affix class="sidebar" relative-element-selector="#home" :offset="{ top: 40, bottom: 40 }">
     <a href="#home">Home</a>
     <a href="#about-us">About Us</a>
     <a href="#portfolio">Portfolio</a>
