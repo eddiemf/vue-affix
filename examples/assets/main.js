@@ -782,6 +782,14 @@ exports.default = {
             default: true
         },
 
+        /**
+         * Sets if the affix should be 'scrollable' when it is
+         * taller than the viewport or if it should always be
+         * affixed to the top until it reaches the end of the
+         * relative element.
+         *
+         * @type {Boolean}
+         */
         scrollAffix: {
             type: Boolean,
             default: false
@@ -803,23 +811,17 @@ exports.default = {
         return {
             affixHeight: null,
             affixBottomPos: null,
-            affixOffsetTop: null,
             affixRect: null,
             relativeElmBottomPos: null,
             relativeElmOffsetTop: null,
             topPadding: null,
-
-            affixedElmOffsetTop: null,
-            affixedElmMarginTop: null,
-
             lastState: null,
             currentState: null,
+            currentScrollAffix: null,
             distanceFromTop: window.scrollY,
             lastDistanceFromTop: window.scrollY,
             scrollingUp: null,
-            scrollingDown: null,
-
-            currentScrollAffix: null
+            scrollingDown: null
         };
     },
 
@@ -842,14 +844,14 @@ exports.default = {
 
             this.setDynamicVariables();
 
-            if (this.$el.offsetHeight + this.offset.top > this.relativeElement.offsetHeight) {
+            if (this.affixHeight + this.offset.top > this.relativeElement.offsetHeight) {
                 return;
             } else {
                 this.handleAffix();
             }
         },
         handleAffix: function handleAffix() {
-            if (this.scrollAffix) {
+            if (this.scrollAffix && this.affixHeight > window.innerHeight) {
                 this.setScrollingDirection();
 
                 if (this.currentScrollAffix == 'scrollaffix-top') {
@@ -1007,6 +1009,12 @@ exports.default = {
                 this.scrollingDown = false;
             }
         },
+
+
+        /**
+         * Sets the affix-top class to indicate that the element is
+         * above the relative element.
+         */
         setAffixTop: function setAffixTop() {
             this.currentState = 'affix-top';
 
@@ -1018,6 +1026,12 @@ exports.default = {
                 this.$el.style.top = null;
             }
         },
+
+
+        /**
+         * Sets the affix class to indicate that the element is
+         * fixed to the top of the relative element.
+         */
         setAffix: function setAffix() {
             this.currentState = 'affix';
             this.$el.style.top = this.topPadding + this.offset.top + 'px';
@@ -1028,6 +1042,12 @@ exports.default = {
                 this.$el.classList.add('affix');
             }
         },
+
+
+        /**
+         * Sets the affix-bottom class to indicate that the element is
+         * below the relative element.
+         */
         setAffixBottom: function setAffixBottom() {
             this.currentState = 'affix-bottom';
             this.$el.style.top = this.relativeElement.offsetHeight - this.affixHeight - this.offset.bottom - this.topPadding + 'px';
@@ -1038,22 +1058,38 @@ exports.default = {
                 this.$el.classList.add('affix-bottom');
             }
         },
+
+
+        /**
+         * Removes all three affix classes.
+         */
         removeClasses: function removeClasses() {
             this.$el.classList.remove('affix-top');
             this.$el.classList.remove('affix');
             this.$el.classList.remove('affix-bottom');
         },
+
+
+        /**
+         * Emits the events based on the current state of the affix.
+         */
         emitEvent: function emitEvent() {
             if (this.scrollAffix && this.lastScrollAffixState) {
                 this.$emit(this.currentScrollAffix.replace('-', ''));
-                console.log(this.currentScrollAffix.replace('-', ''));
             }
 
             if (this.lastState) {
                 this.$emit(this.currentState.replace('-', ''));
-                console.log(this.currentState.replace('-', ''));
             }
         },
+
+
+        /**
+         * Gets the top offset position of an element in the document.
+         *
+         * @param  {Element} element
+         * @return {Number}
+         */
         getOffsetTop: function getOffsetTop(element) {
             var yPosition = 0;
 
