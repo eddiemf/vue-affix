@@ -209,7 +209,9 @@ exports.default = Plugin;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var disposed = false
 function injectStyle (ssrContext) {
+  if (disposed) return
   __webpack_require__(2)
 }
 var Component = __webpack_require__(7)(
@@ -224,6 +226,25 @@ var Component = __webpack_require__(7)(
   /* moduleIdentifier (server only) */
   null
 )
+Component.options.__file = "/Users/mauricio/web/vue-affix/src/affix.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] affix.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-714a56fe", Component.options)
+  } else {
+    hotAPI.reload("data-v-714a56fe", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
 
 module.exports = Component.exports
 
@@ -239,7 +260,20 @@ var content = __webpack_require__(3);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("044fa194", content, true);
+var update = __webpack_require__(5)("1cea1b81", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-714a56fe\",\"scoped\":false,\"hasInlineConfig\":false}!../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./affix.vue", function() {
+     var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-714a56fe\",\"scoped\":false,\"hasInlineConfig\":false}!../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./affix.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 3 */
@@ -250,7 +284,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, ".affix,.affix-bottom{position:fixed}", ""]);
+exports.push([module.i, "\n.vue-affix {\n    position: relative;\n}\n.affix {\n    position: fixed;\n}\n.affix-bottom {\n    position: relative;\n}\n", ""]);
 
 // exports
 
@@ -746,6 +780,11 @@ exports.default = {
         enabled: {
             type: Boolean,
             default: true
+        },
+
+        scrollAffix: {
+            type: Boolean,
+            default: false
         }
     },
 
@@ -762,89 +801,279 @@ exports.default = {
 
     data: function data() {
         return {
+            affixHeight: null,
+            affixBottomPos: null,
+            affixOffsetTop: null,
+            affixRect: null,
+            relativeElmBottomPos: null,
+            relativeElmOffsetTop: null,
+            topPadding: null,
+
             affixedElmOffsetTop: null,
             affixedElmMarginTop: null,
-            relativeElmEnd: null,
+
             lastState: null,
-            currentState: null
+            currentState: null,
+            distanceFromTop: window.scrollY,
+            lastDistanceFromTop: window.scrollY,
+            scrollingUp: null,
+            scrollingDown: null,
+
+            currentScrollAffix: null
         };
     },
 
 
     methods: {
+        setDynamicVariables: function setDynamicVariables() {
+            this.distanceFromTop = window.scrollY;
+            this.affixRect = this.$el.getBoundingClientRect();
+            this.affixHeight = this.$el.offsetHeight;
+            this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
+            this.screenBottomPos = this.distanceFromTop + window.innerHeight;
+            this.relativeElmBottomPos = this.distanceFromTop + this.relativeElement.getBoundingClientRect().bottom;
+            this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
+        },
         onScroll: function onScroll() {
             if (!this.enabled) {
                 this.removeClasses();
                 return;
             }
 
-            var distanceFromTop = window.scrollY;
+            this.setDynamicVariables();
 
             if (this.$el.offsetHeight + this.offset.top > this.relativeElement.offsetHeight) {
                 return;
+            } else {
+                this.handleAffix();
+            }
+        },
+        handleAffix: function handleAffix() {
+            if (this.scrollAffix) {
+                this.setScrollingDirection();
+
+                if (this.currentScrollAffix == 'scrollaffix-top') {
+                    if (this.distanceFromTop + this.offset.top >= this.affixInitialTop) {
+                        this.setScrollAffixScrolling();
+                    }
+                }
+
+                if (this.scrollingDown && this.currentScrollAffix == 'scrollaffix-scrolling') {
+                    if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom && this.screenBottomPos < this.relativeElmBottomPos) {
+                        this.setScrollAffixDown();
+                    }
+                }
+
+                if (this.scrollingUp && this.currentScrollAffix == 'scrollaffix-scrolling') {
+                    if (this.distanceFromTop + this.offset.top + this.topPadding < this.affixRect.top + this.distanceFromTop) {
+                        this.setScrollAffixUp();
+                    }
+                }
+
+                if (this.scrollingDown && this.currentScrollAffix == 'scrollaffix-down') {
+                    if (this.screenBottomPos >= this.relativeElmBottomPos) {
+                        this.setScrollAffixBottom();
+                    }
+                }
+
+                if (this.currentScrollAffix == 'scrollaffix-bottom' && this.screenBottomPos < this.relativeElmBottomPos) {
+                    this.setScrollAffixScrolling();
+                }
+
+                if (this.scrollingUp && this.currentScrollAffix == 'scrollaffix-down' || this.scrollingDown && this.currentScrollAffix == 'scrollaffix-up') {
+                    this.setScrollAffixScrolling();
+                }
+
+                if (this.scrollingUp && this.currentScrollAffix == 'scrollaffix-up' && this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
+                    this.setScrollAffixTop();
+                }
+
+                this.lastScrollAffixState = this.currentScrollAffix;
+                this.lastDistanceFromTop = this.distanceFromTop;
+                return;
             }
 
-            if (distanceFromTop < this.getPosition(this.relativeElement).y - this.offset.top) {
-                this.currentState = 'affix-top';
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affixtop');
-
-                    this.removeClasses();
-                    this.$el.classList.add('affix-top');
-                }
-            } else if (distanceFromTop >= this.getPosition(this.relativeElement).y - this.offset.top && distanceFromTop < this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
-                this.currentState = 'affix';
-                this.$el.style.top = this.affixedElmMarginTop + 'px';
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affix');
-
-                    this.removeClasses();
-                    this.$el.classList.add('affix');
-                }
-            } else if (distanceFromTop >= this.relativeElmEnd - this.$el.offsetHeight - this.affixedElmMarginTop - this.offset.bottom) {
-                this.currentState = 'affix-bottom';
-                this.$el.style.top = this.relativeElmEnd - this.offset.bottom - this.$el.offsetHeight - distanceFromTop + 'px';
-
-                if (this.currentState != this.lastState) {
-                    // To make sure it will not fire right after component is mounted
-                    if (this.lastState) this.$emit('affixbottom');
-
-                    this.removeClasses();
-                    this.$el.classList.add('affix-bottom');
-                }
+            if (this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
+                this.setAffixTop();
+            } else if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top && this.relativeElmBottomPos - this.offset.bottom >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+                this.setAffix();
+            } else if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+                this.setAffixBottom();
             }
 
             this.lastState = this.currentState;
+        },
+
+
+        /**
+         * Sets the initial position of the affixed element
+         * when scrollAffix is set to true.
+         */
+        initScrollAffix: function initScrollAffix() {
+            if (this.distanceFromTop < this.affixInitialTop - this.offset.top) {
+                this.setScrollAffixTop();
+            } else if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom && this.screenBottomPos < this.relativeElmBottomPos) {
+                this.setScrollAffixDown();
+            } else if (this.screenBottomPos >= this.relativeElmBottomPos) {
+                this.setScrollAffixBottom();
+            } else {
+                this.setScrollAffixScrolling();
+            }
+        },
+
+
+        /**
+         * Sets te currentScrollAffix to 'scrolling' to indicate that
+         * the window is scrolling inside the affixed element.
+         */
+        setScrollAffixScrolling: function setScrollAffixScrolling() {
+            this.currentScrollAffix = 'scrollaffix-scrolling';
+            this.$el.style.top = this.affixRect.top + this.distanceFromTop - this.affixInitialTop + 'px';
+            this.$el.style.bottom = 'auto';
+            this.removeClasses();
+            this.emitEvent();
+        },
+
+
+        /**
+         * Sets the position of the affixed element to be fixed
+         * at the top of the screen, as you are scrolling UP.
+         */
+        setScrollAffixUp: function setScrollAffixUp() {
+            this.currentScrollAffix = 'scrollaffix-up';
+
+            if (this.currentScrollAffix != this.lastState) {
+                this.$el.style.top = this.topPadding + this.offset.top + 'px';
+                this.$el.style.bottom = 'auto';
+                this.removeClasses();
+                this.emitEvent();
+                this.$el.classList.add('affix');
+            }
+        },
+
+
+        /**
+         * Sets the position of the affixed element to be fixed
+         * at the bottom of the screen, as you are scrolling DOWN.
+         */
+        setScrollAffixDown: function setScrollAffixDown() {
+            this.currentScrollAffix = 'scrollaffix-down';
+
+            if (this.currentScrollAffix != this.lastState) {
+                this.$el.style.bottom = this.offset.bottom + 'px';
+                this.$el.style.top = 'auto';
+                this.removeClasses();
+                this.emitEvent();
+                this.$el.classList.add('affix');
+            }
+        },
+
+
+        /**
+         * Sets the position of the affixed element to be at the
+         * most top.
+         */
+        setScrollAffixTop: function setScrollAffixTop() {
+            this.currentScrollAffix = 'scrollaffix-top';
+            this.$el.style.top = 0;
+            this.$el.style.bottom = 'auto';
+            this.removeClasses();
+            this.emitEvent();
+        },
+
+
+        /**
+         * Sets the position of the affixed element to be at the
+         * most bottom.
+         */
+        setScrollAffixBottom: function setScrollAffixBottom() {
+            this.currentScrollAffix = 'scrollaffix-bottom';
+            this.$el.style.top = this.relativeElmBottomPos - this.affixInitialTop - this.affixHeight - this.offset.bottom + 'px';
+            this.$el.style.bottom = 'auto';
+            this.removeClasses();
+            this.emitEvent();
+        },
+
+
+        /**
+         * Sets the direction the window is being scrolled.
+         */
+        setScrollingDirection: function setScrollingDirection() {
+            if (this.distanceFromTop > this.lastDistanceFromTop) {
+                this.scrollingDown = true;
+                this.scrollingUp = false;
+            } else {
+                this.scrollingUp = true;
+                this.scrollingDown = false;
+            }
+        },
+        setAffixTop: function setAffixTop() {
+            this.currentState = 'affix-top';
+
+            if (this.currentState != this.lastState) {
+                this.emitEvent();
+                this.removeClasses();
+                this.$el.classList.remove('affix');
+                this.$el.classList.add('affix-top');
+                this.$el.style.top = null;
+            }
+        },
+        setAffix: function setAffix() {
+            this.currentState = 'affix';
+            this.$el.style.top = this.topPadding + this.offset.top + 'px';
+
+            if (this.currentState != this.lastState) {
+                this.emitEvent();
+                this.removeClasses();
+                this.$el.classList.add('affix');
+            }
+        },
+        setAffixBottom: function setAffixBottom() {
+            this.currentState = 'affix-bottom';
+            this.$el.style.top = this.relativeElement.offsetHeight - this.affixHeight - this.offset.bottom - this.topPadding + 'px';
+
+            if (this.currentState != this.lastState) {
+                this.emitEvent();
+                this.removeClasses();
+                this.$el.classList.add('affix-bottom');
+            }
         },
         removeClasses: function removeClasses() {
             this.$el.classList.remove('affix-top');
             this.$el.classList.remove('affix');
             this.$el.classList.remove('affix-bottom');
         },
-        getPosition: function getPosition(element) {
-            var xPosition = 0;
+        emitEvent: function emitEvent() {
+            if (this.scrollAffix && this.lastScrollAffixState) {
+                this.$emit(this.currentScrollAffix.replace('-', ''));
+                console.log(this.currentScrollAffix.replace('-', ''));
+            }
+
+            if (this.lastState) {
+                this.$emit(this.currentState.replace('-', ''));
+                console.log(this.currentState.replace('-', ''));
+            }
+        },
+        getOffsetTop: function getOffsetTop(element) {
             var yPosition = 0;
 
             while (element) {
-                xPosition += element.offsetLeft;
                 yPosition += element.offsetTop;
                 element = element.offsetParent;
             }
 
-            return { x: xPosition, y: yPosition };
+            return yPosition;
         }
     },
 
     mounted: function mounted() {
         this.$el.classList.add('vue-affix');
+        this.affixInitialTop = this.getOffsetTop(this.$el);
+        this.topPadding = this.affixInitialTop - this.getOffsetTop(this.relativeElement);
 
-        this.affixedElmOffsetTop = this.getPosition(this.$el).y;
-        this.affixedElmMarginTop = this.affixedElmOffsetTop - this.getPosition(this.relativeElement).y + this.offset.top;
-        this.relativeElmEnd = this.relativeElement.offsetHeight + this.getPosition(this.relativeElement).y;
+        this.setDynamicVariables();
+
+        if (this.scrollAffix) this.initScrollAffix();
 
         this.onScroll();
         document.addEventListener('scroll', this.onScroll);
@@ -856,11 +1085,18 @@ exports.default = {
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_vm._t("default")], 2)
 },staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-714a56fe", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
