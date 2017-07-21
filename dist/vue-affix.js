@@ -108,9 +108,7 @@ exports.default = Plugin;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var disposed = false
 function injectStyle (ssrContext) {
-  if (disposed) return
   __webpack_require__(2)
 }
 var Component = __webpack_require__(7)(
@@ -125,25 +123,6 @@ var Component = __webpack_require__(7)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/mauricio/web/vue-affix/src/affix.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] affix.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-714a56fe", Component.options)
-  } else {
-    hotAPI.reload("data-v-714a56fe", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
 
 module.exports = Component.exports
 
@@ -159,20 +138,7 @@ var content = __webpack_require__(3);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("1cea1b81", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-714a56fe\",\"scoped\":false,\"hasInlineConfig\":false}!../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./affix.vue", function() {
-     var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-714a56fe\",\"scoped\":false,\"hasInlineConfig\":false}!../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./affix.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
+var update = __webpack_require__(5)("044fa194", content, true);
 
 /***/ }),
 /* 3 */
@@ -183,7 +149,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.vue-affix {\n    position: relative;\n}\n.affix {\n    position: fixed;\n}\n.affix-bottom {\n    position: relative;\n}\n", ""]);
+exports.push([module.i, ".vue-affix{position:relative}.affix{position:fixed}.affix-bottom{position:relative}", ""]);
 
 // exports
 
@@ -743,7 +709,7 @@ exports.default = {
 
             this.setDynamicVariables();
 
-            if (this.affixHeight + this.offset.top > this.relativeElement.offsetHeight) {
+            if (this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight) {
                 return;
             } else {
                 this.handleAffix();
@@ -796,9 +762,11 @@ exports.default = {
 
             if (this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
                 this.setAffixTop();
-            } else if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top && this.relativeElmBottomPos - this.offset.bottom >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+            }
+            if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top && this.relativeElmBottomPos - this.offset.bottom >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
                 this.setAffix();
-            } else if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+            }
+            if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
                 this.setAffixBottom();
             }
 
@@ -1020,18 +988,11 @@ exports.default = {
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_vm._t("default")], 2)
 },staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-714a56fe", module.exports)
-  }
-}
 
 /***/ })
 /******/ ]);

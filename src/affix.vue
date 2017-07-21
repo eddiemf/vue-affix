@@ -110,7 +110,7 @@
 
                 this.setDynamicVariables();
 
-                if (this.affixHeight + this.offset.top > this.relativeElement.offsetHeight) {
+                if (this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight) {
                     return;
                 } else {
                     this.handleAffix();
@@ -165,9 +165,11 @@
 
                 if (this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
                     this.setAffixTop();
-                } else if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top && this.relativeElmBottomPos - this.offset.bottom >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+                }
+                if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top && this.relativeElmBottomPos - this.offset.bottom >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
                     this.setAffix();
-                } else if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+                }
+                if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
                     this.setAffixBottom();
                 }
 
