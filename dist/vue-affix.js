@@ -609,7 +609,8 @@ exports.default = {
         /**
          * The relative element selector string. The relative element is
          * the element you want your affix to be related to, as it will
-         * not be related to the window.
+         * not be related to the window. The element will be affixed when
+         * the window reaches the relative element.
          *
          * @example '#contact'
          * @type {String}
