@@ -141,7 +141,7 @@
                     }
 
                     if (this.scrollingDown && this.currentScrollAffix == 'scrollaffix-down') {
-                        if (this.screenBottomPos >= this.relativeElmBottomPos) {
+                        if (this.screenBottomPos >= this.relativeElmBottomPos + this.offset.bottom) {
                             this.setScrollAffixBottom();
                         }
                     }
@@ -255,7 +255,7 @@
              */
             setScrollAffixBottom() {
                 this.currentScrollAffix = 'scrollaffix-bottom';
-                this.$el.style.top = `${this.relativeElmBottomPos - this.affixInitialTop - this.affixHeight - this.offset.bottom}px`;
+                this.$el.style.top = `${this.relativeElmBottomPos - this.affixInitialTop - this.affixHeight}px`;
                 this.$el.style.bottom = 'auto';
                 this.removeClasses();
                 this.emitEvent();
