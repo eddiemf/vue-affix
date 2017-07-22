@@ -1,5 +1,17 @@
 @import "normalize";
 
-.vue-affix {
-    width: 306px;
+body {
+    overflow-x: hidden;
+}
+
+.hero a {
+    color: #00d1b2 !important;
+}
+
+.sidebar-menu {
+    width: 318px;
+}
+
+.scrollaffix-sidebar {
+    width: 204px;
 }

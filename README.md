@@ -1,5 +1,5 @@
 # Affixes an element on the screen based on a relative element
-This Vue2.x plugin works in a similar way as Bootstrap's Affix, but in a better and smarter way.
+Unlike other plugins, this Vue2 component will make it easy to affix any element.
 
  - Affixes an element based on a relative element as you scroll
  - Only needs 3 super simple configuration steps
@@ -8,7 +8,7 @@ This Vue2.x plugin works in a similar way as Bootstrap's Affix, but in a better 
  - Vue2
  - Uses pure JS!
 
-Check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html" target="_blank">demo</a>!
+Make sure to check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html" target="_blank">demo</a> to see how it works!
 
 ## Installation
 Install via npm and use it as a vue plugin in your app.
@@ -29,18 +29,17 @@ Vue.use(Affix);
 Example below:
 
 ```html
-<affix class="sidebar" relative-element-selector="#home">
-    <a href="#home">Home</a>
-    <a href="#about-us">About Us</a>
-    <a href="#portfolio">Portfolio</a>
-    <a href="#contact">Contact</a>
+<affix class="sidebar-menu" relative-element-selector="#example-content">
+    <a href="#markup-1">Markup 1</a>
+    <a href="#markup-2">Markup 2</a>
+    <a href="#markup-3">Markup 3</a>
 </affix>
-<section id="home" class="section">
-    <p>This is the #home section which the sidebar will be relatively affixed!</p>
+<section id="example-content">
+    <p>This is the #example-content section which the sidebar will be relatively affixed!</p>
 </section>
 ```
 
-This will make the `.sidebar` element stay fixed while in the `#home` element viewport. Simple as that.
+This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that.
 
 ## How the plugin works
 It works similar to Bootstrap's Affix plugin, it will add 3 classes (`.affix-top`, `.affix` and `.affix-bottom`) to the affixed element while you scroll the page.
@@ -54,11 +53,10 @@ You can also set an offset object with the top and bottom values that will be us
 ## Configuration
 The only configuration you need to do in CSS is setting a width for the `.vue-affix` class, the rest will be applied through props as in the example below:
 ``` html
-<affix class="sidebar" relative-element-selector="#home" :offset="{ top: 40, bottom: 40 }">
-    <a href="#home">Home</a>
-    <a href="#about-us">About Us</a>
-    <a href="#portfolio">Portfolio</a>
-    <a href="#contact">Contact</a>
+<affix class="sidebar-menu" relative-element-selector="#example-content" :offset="{ top: 40, bottom: 40 }">
+    <a href="#markup-1">Markup 1</a>
+    <a href="#markup-2">Markup 2</a>
+    <a href="#markup-3">Markup 3</a>
 </affix>
 ```
 
@@ -97,8 +95,7 @@ offset: {
 
 /**
  * Checks if the plugin should be enabled/disabled based
- * on true/false, good for conditional rendering like
- * mobile behavior.
+ * on true/false, good for mobile when you need to disable it.
  *
  * @type {Boolean}
  */
@@ -111,7 +108,7 @@ enabled: {
  * Sets if the affix should be 'scrollable' when it is
  * taller than the viewport or if it should always be
  * affixed to the top until it reaches the end of the
- * relative element.
+ * relative element. Check the demo to understand better.
  *
  * @type {Boolean}
  */
@@ -136,10 +133,9 @@ If `scroll-affix` prop is set to true, it will fire 5 different events:
 
 Those can be catched as I show in the example below:
 ```html
-<affix class="sidebar" relative-element-selector="#home" v-on:affixbottom="yourFunction()">
-    <a href="#home">Home</a>
-    <a href="#about-us">About Us</a>
-    <a href="#portfolio">Portfolio</a>
-    <a href="#contact">Contact</a>
+<affix class="sidebar-menu" relative-element-selector="#example-content" v-on:affixbottom="yourFunction()">
+    <a href="#markup-1">Markup 1</a>
+    <a href="#markup-2">Markup 2</a>
+    <a href="#markup-3">Markup 3</a>
 </affix>
 ```

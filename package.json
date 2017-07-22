@@ -49,6 +49,7 @@
     "style-loader": "^0.18.2",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^12.2.1",
+    "vue-scrollactive": "^0.4.0",
     "webpack": "^3.0.0"
   }
 }
