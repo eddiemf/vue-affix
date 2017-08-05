@@ -88,14 +88,7 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_0__dist_vue_affix_js___default.a);
 Vue.use(__WEBPACK_IMPORTED_MODULE_1_vue_scrollactive___default.a);
 
 const app = new Vue({
-	el: '#app',
-
-    methods: {
-        condition() {
-            if (window.innerWidth >= 1200) return true;
-            return false;
-        }
-    }
+	el: '#app'
 });
 
 
