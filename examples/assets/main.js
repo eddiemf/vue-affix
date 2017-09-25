@@ -87,7 +87,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Vue.use(__WEBPACK_IMPORTED_MODULE_0__dist_vue_affix___default.a);
 Vue.use(__WEBPACK_IMPORTED_MODULE_1_vue_scrollactive___default.a);
 
-const app = new Vue({
+var app = new Vue({
   el: '#app',
 });
 
