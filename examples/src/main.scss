@@ -1,43 +1,43 @@
 @import "normalize";
 
 body {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 .hero a {
-    color: #00d1b2 !important;
+  color: #00d1b2 !important;
 }
 
 .logo-heading a {
-    color: #fff !important;
+  color: #fff !important;
 }
 
 .sidebar-menu {
-    width: 318px;
+  width: 318px;
 
-    @media screen and (max-width: 1383px) {
-        width: 270px;
-    }
+  @media screen and (max-width: 1383px) {
+    width: 270px;
+  }
 
-    @media screen and (max-width: 1191px) {
-        width: 222px;
-    }
+  @media screen and (max-width: 1191px) {
+    width: 222px;
+  }
 }
 
 .scrollaffix-sidebar {
-    width: 204px;
-    font-size: 14px;
+  width: 204px;
+  font-size: 14px;
 
-    @media screen and (max-width: 1383px) {
-        width: 170px;
-    }
+  @media screen and (max-width: 1383px) {
+    width: 170px;
+  }
 
-    @media screen and (max-width: 1191px) {
-        width: 140px;
-        font-size: 12px;
-    }
+  @media screen and (max-width: 1191px) {
+    width: 140px;
+    font-size: 12px;
+  }
 
-    .card-content {
-        padding: 15px;
-    }
+  .card-content {
+    padding: 15px;
+  }
 }
