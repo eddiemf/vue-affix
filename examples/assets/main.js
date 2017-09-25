@@ -762,7 +762,7 @@ exports.default = {
 
   computed: {
     /**
-     * Computes the relative element selector to a selector.
+     * Computes the relative element selector to an element.
      *
      * @return {Element} document.querySelector(this.relativeElementSelector)
      */
@@ -782,8 +782,8 @@ exports.default = {
       lastState: null,
       currentState: null,
       currentScrollAffix: null,
-      distanceFromTop: window.scrollY,
-      lastDistanceFromTop: window.scrollY,
+      distanceFromTop: window.pageYOffset,
+      lastDistanceFromTop: window.pageYOffset,
       scrollingUp: null,
       scrollingDown: null
     };
@@ -792,7 +792,7 @@ exports.default = {
 
   methods: {
     setDynamicVariables: function setDynamicVariables() {
-      this.distanceFromTop = window.scrollY;
+      this.distanceFromTop = window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
@@ -856,6 +856,7 @@ exports.default = {
 
         this.lastScrollAffixState = this.currentScrollAffix;
         this.lastDistanceFromTop = this.distanceFromTop;
+
         return;
       }
 
@@ -1081,10 +1082,10 @@ exports.default = {
     if (this.scrollAffix) this.initScrollAffix();
 
     this.onScroll();
-    document.addEventListener('scroll', this.onScroll);
+    window.addEventListener('scroll', this.onScroll);
   },
   beforeDestroy: function beforeDestroy() {
-    document.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('scroll', this.onScroll);
   }
 };
 
