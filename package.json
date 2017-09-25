@@ -1,6 +1,6 @@
 {
   "name": "vue-affix",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "title": "Vue Affix",
   "description": "A Vue.js plugin that affixes an element in the window while you scroll, similar to Bootstrap Affix but much simpler",
   "main": "dist/vue-affix.js",
