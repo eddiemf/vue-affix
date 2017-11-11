@@ -14,7 +14,7 @@ Make sure to check the <a href="https://eddiemf.github.io/vue-affix/examples/exa
 Install via npm and use it as a vue plugin in your app.
 
 ```bash
-npm install --save-dev vue-affix
+npm install -S vue-affix
 ```
 ```js
 var Affix = require('vue-affix');
@@ -30,12 +30,12 @@ Example below:
 
 ```html
 <affix class="sidebar-menu" relative-element-selector="#example-content">
-    <a href="#markup-1">Markup 1</a>
-    <a href="#markup-2">Markup 2</a>
-    <a href="#markup-3">Markup 3</a>
+  <a href="#markup-1">Markup 1</a>
+  <a href="#markup-2">Markup 2</a>
+  <a href="#markup-3">Markup 3</a>
 </affix>
 <section id="example-content">
-    <p>This is the #example-content section which the sidebar will be relatively affixed!</p>
+  <p>This is the #example-content section which the sidebar will be relatively affixed!</p>
 </section>
 ```
 
@@ -54,9 +54,9 @@ You can also set an offset object with the top and bottom values that will be us
 The only configuration you need to do in CSS is setting a width for the `.vue-affix` class, the rest will be applied through props as in the example below:
 ``` html
 <affix class="sidebar-menu" relative-element-selector="#example-content" :offset="{ top: 40, bottom: 40 }">
-    <a href="#markup-1">Markup 1</a>
-    <a href="#markup-2">Markup 2</a>
-    <a href="#markup-3">Markup 3</a>
+  <a href="#markup-1">Markup 1</a>
+  <a href="#markup-2">Markup 2</a>
+  <a href="#markup-3">Markup 3</a>
 </affix>
 ```
 
@@ -73,8 +73,8 @@ These are all the props you can pass to the component:
  * @type {String}
  */
 relativeElementSelector: {
-    type: String,
-    required: true
+  type: String,
+  required: true
 },
 
 /**
@@ -84,13 +84,13 @@ relativeElementSelector: {
  * @type {Object}
  */
 offset: {
-    type: Object,
-    default: () => {
-        return {
-            top: 40,
-            bottom: 40
-        }
+  type: Object,
+  default: () => {
+    return {
+      top: 40,
+      bottom: 40
     }
+  }
 },
 
 /**
@@ -100,8 +100,8 @@ offset: {
  * @type {Boolean}
  */
 enabled: {
-    type: Boolean,
-    default: true
+  type: Boolean,
+  default: true
 },
 
 /**
@@ -113,8 +113,8 @@ enabled: {
  * @type {Boolean}
  */
 scrollAffix: {
-    type: Boolean,
-    default: false
+  type: Boolean,
+  default: false
 }
 ```
 
@@ -134,8 +134,8 @@ If `scroll-affix` prop is set to true, it will fire 5 different events:
 Those can be catched as I show in the example below:
 ```html
 <affix class="sidebar-menu" relative-element-selector="#example-content" v-on:affixbottom="yourFunction()">
-    <a href="#markup-1">Markup 1</a>
-    <a href="#markup-2">Markup 2</a>
-    <a href="#markup-3">Markup 3</a>
+  <a href="#markup-1">Markup 1</a>
+  <a href="#markup-2">Markup 2</a>
+  <a href="#markup-3">Markup 3</a>
 </affix>
 ```
