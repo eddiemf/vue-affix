@@ -11,8 +11,12 @@ module.exports = {
     filename: '[name]',
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    library: ['vue-affix'],
-    libraryTarget: 'umd'
+    library: {
+      root: "MyLibrary",
+      amd: "vue-affix",
+      commonjs: "vue-affix",
+    },
+    libraryTarget: 'umd',
   },
   module: {
     rules: [

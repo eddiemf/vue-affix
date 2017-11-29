@@ -6,7 +6,7 @@
 	else if(typeof exports === 'object')
 		exports["vue-affix"] = factory();
 	else
-		root["vue-affix"] = factory();
+		root["MyLibrary"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
