@@ -12,7 +12,7 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
     library: {
-      root: "MyLibrary",
+      root: "vueAffix",
       amd: "vue-affix",
       commonjs: "vue-affix",
     },
