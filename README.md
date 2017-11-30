@@ -1,35 +1,40 @@
 # Affixes an element on the screen based on a relative element
-Unlike other plugins, this Vue2 component will make it easy to affix any element.
+Unlike other plugins, this Vue 2 component will make it easy to affix any element while scrolling.
 
- - Affixes an element based on a relative element as you scroll
+ - Affixes an element based on a relative element
  - Only needs 3 super simple configuration steps
- - Dispatches events
+ - Dispatches events for affix tracking
  - No dependencies
- - Vue2
  - Uses pure JS!
 
 Make sure to check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html" target="_blank">demo</a> to see how it works!
 
 ## Installation
-Install via npm and use it as a vue plugin in your app.
+Install via npm and use it as a vue plugin in your app:
 
 ```bash
-npm install -S vue-affix
+npm install --save vue-affix
 ```
 ```js
-var Affix = require('vue-affix');
-Vue.use(Affix);
+var VueAffix = require('vue-affix');
+Vue.use(VueAffix);
+```
+
+Or if you wish to include it in a `script` tag, just include the `vue-affix.min.js` file located in the `dist` folder as so:
+
+```html
+<script src="dist/vue-affix.min.js"></script>
 ```
 
 ## Usage
  - Wrap the element in an `<affix>` tag
- - Set an element selector in a `relative-element-selector` property
+ - Set an element selector in the `relative-element-selector` property
  - Set a width value for the `.vue-affix` class in your CSS (that is the element which the affix will be applied to)
 
 Example below:
 
 ```html
-<affix class="sidebar-menu" relative-element-selector="#example-content">
+<affix class="sidebar-menu" relative-element-selector="#example-content" style="width: 300px">
   <a href="#markup-1">Markup 1</a>
   <a href="#markup-2">Markup 2</a>
   <a href="#markup-3">Markup 3</a>
@@ -39,7 +44,7 @@ Example below:
 </section>
 ```
 
-This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that.
+This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that. Just don't forget to set the width to `.vue-affix` class! It will probably cause unexpected behavior if you don't set it!
 
 ## How the plugin works
 It works similar to Bootstrap's Affix plugin, it will add 3 classes (`.affix-top`, `.affix` and `.affix-bottom`) to the affixed element while you scroll the page.
