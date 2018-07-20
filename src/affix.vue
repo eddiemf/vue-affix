@@ -159,7 +159,6 @@ export default {
         }
 
         if (this.scrollingUp &&
-            this.currentScrollAffix === 'scrollaffix-up' &&
             this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
           this.setScrollAffixTop();
         }
