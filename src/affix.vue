@@ -124,7 +124,7 @@ export default {
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
-      this.screenBottomPos = this.distanceFromTop + this.scrollContainer.innerHeight;
+      this.screenBottomPos = this.distanceFromTop + this.scrollContainer.outerHeight;
       this.relativeElmBottomPos = this.distanceFromTop +
         this.relativeElement.getBoundingClientRect().bottom;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
