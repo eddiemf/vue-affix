@@ -728,7 +728,7 @@ exports.default = {
 
   methods: {
     setDynamicVariables: function setDynamicVariables() {
-      this.distanceFromTop = this.scrollContainer.scrollTop || window.pageYOffset;
+      this.distanceFromTop = this.scrollContainer == window ? window.pageYOffset : this.scrollContainer.scrollTop;
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
