@@ -61,6 +61,18 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    /**
+     * Sets the scrollable container to use in scroll position
+     * calculations. If not set, the window object will be
+     * used by default.
+     *
+     * @type {Object}
+     */
+    scrollContainerSelector: {
+      type: String,
+      default: null,
+    }
   },
 
   computed: {
@@ -72,6 +84,20 @@ export default {
     relativeElement() {
       return document.querySelector(this.relativeElementSelector);
     },
+
+    /**
+     * Computes the scroll container selector to an element.
+     * Defaults to the window object
+     *
+     * @return {Element}
+     */
+    scrollContainer() {
+      if(this.scrollContainerSelector) {
+        return document.querySelector(this.scrollContainerSelector);
+      }
+
+      return window;
+    }
   },
 
   data() {
@@ -94,11 +120,11 @@ export default {
 
   methods: {
     setDynamicVariables() {
-      this.distanceFromTop = window.pageYOffset;
+      this.distanceFromTop = this.scrollContainer.scrollTop || window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
-      this.screenBottomPos = this.distanceFromTop + window.innerHeight;
+      this.screenBottomPos = this.distanceFromTop + this.scrollContainer.innerHeight;
       this.relativeElmBottomPos = this.distanceFromTop +
         this.relativeElement.getBoundingClientRect().bottom;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
@@ -120,7 +146,7 @@ export default {
     },
 
     handleAffix() {
-      if (this.scrollAffix && this.affixHeight > window.innerHeight) {
+      if (this.scrollAffix && this.affixHeight > this.scrollContainer.innerHeight) {
         this.setScrollingDirection();
 
         if (this.currentScrollAffix === 'scrollaffix-top') {
@@ -384,11 +410,11 @@ export default {
     if (this.scrollAffix) this.initScrollAffix();
 
     this.onScroll();
-    window.addEventListener('scroll', this.onScroll);
+    this.scrollContainer.addEventListener('scroll', this.onScroll);
   },
 
   beforeDestroy() {
-    window.removeEventListener('scroll', this.onScroll);
+    this.scrollContainer.removeEventListener('scroll', this.onScroll);
   },
 };
 </script>
