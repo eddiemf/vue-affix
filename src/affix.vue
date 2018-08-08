@@ -113,6 +113,11 @@ export default {
       this.setDynamicVariables();
 
       if (this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight) {
+        if (this.scrollAffix && this.currentScrollAffix !== 'scrollaffix-top') {
+          this.setScrollAffixTop();
+        } else if (this.currentState !== 'affix-top') {
+          this.setAffixTop();
+        }
         return;
       }
 
