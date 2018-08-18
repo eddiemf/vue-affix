@@ -1,20 +1,16 @@
-var path = require('path');
-var webpack = require('webpack')
-var PROD = (process.env.NODE_ENV === 'production');
+const path = require('path');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
-  entry: {
-    'vue-affix.js': './src/index.js',
-    'vue-affix.min.js': './src/index.js'
-  },
+  entry: ['./src/index.js'],
   output: {
-    filename: '[name]',
+    filename: 'vue-affix.min.js',
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
     library: {
-      root: "vueAffix",
-      amd: "vue-affix",
-      commonjs: "vue-affix",
+      root: 'vueAffix',
+      amd: 'vue-affix',
+      commonjs: 'vue-affix',
     },
     libraryTarget: 'umd',
   },
@@ -23,22 +19,17 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+        use: ['babel-loader', 'eslint-loader'],
       },
       {
         test: /\.vue$/,
-        use: {
-          loader: 'vue-loader'
-        }
-      }
-    ]
+        use: ['vue-loader', 'eslint-loader'],
+      },
+      {
+        test: /\.css$/,
+        use: ['css-loader'],
+      },
+    ],
   },
-  plugins: PROD ? [
-  new webpack.optimize.UglifyJsPlugin({
-    include: /\.min\.js$/,
-    minimize: true
-  })
-  ] : []
-}
+  plugins: [new VueLoaderPlugin()],
+};
