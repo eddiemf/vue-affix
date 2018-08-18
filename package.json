@@ -1,9 +1,9 @@
 {
   "name": "vue-affix",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "title": "Vue Affix",
   "description": "A Vue.js plugin that affixes an element in the window while you scroll, similar to Bootstrap Affix but much simpler",
-  "main": "dist/vue-affix.js",
+  "main": "dist/vue-affix.min.js",
   "scripts": {
     "dev": "webpack --progress --hide-modules --mode=development",
     "watch": "webpack --progress --hide-modules --watch --mode=development",
@@ -45,6 +45,7 @@
     "eslint-plugin-html": "^4.0.5",
     "eslint-plugin-import": "^2.14.0",
     "vue-loader": "^15.3.0",
+    "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.5.17",
     "webpack": "4.16.5",
     "webpack-cli": "^3.1.0"

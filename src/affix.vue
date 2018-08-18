@@ -107,6 +107,7 @@ export default {
     onScroll() {
       if (!this.enabled) {
         this.removeClasses();
+
         return;
       }
 
