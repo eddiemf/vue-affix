@@ -99,14 +99,15 @@ export default {
       this.affixHeight = this.$el.offsetHeight;
       this.affixBottomPos = this.distanceFromTop + this.affixRect.bottom;
       this.screenBottomPos = this.distanceFromTop + window.innerHeight;
-      this.relativeElmBottomPos = this.distanceFromTop +
-        this.relativeElement.getBoundingClientRect().bottom;
+      this.relativeElmBottomPos = this.distanceFromTop
+        + this.relativeElement.getBoundingClientRect().bottom;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
     },
 
     onScroll() {
       if (!this.enabled) {
         this.removeClasses();
+
         return;
       }
 
@@ -130,15 +131,15 @@ export default {
         }
 
         if (this.scrollingDown && this.currentScrollAffix === 'scrollaffix-scrolling') {
-          if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom &&
-              this.screenBottomPos < this.relativeElmBottomPos) {
+          if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom
+            && this.screenBottomPos < this.relativeElmBottomPos) {
             this.setScrollAffixDown();
           }
         }
 
         if (this.scrollingUp && this.currentScrollAffix === 'scrollaffix-scrolling') {
-          if (this.distanceFromTop + this.offset.top + this.topPadding <
-              this.affixRect.top + this.distanceFromTop) {
+          if (this.distanceFromTop + this.offset.top
+            + this.topPadding < this.affixRect.top + this.distanceFromTop) {
             this.setScrollAffixUp();
           }
         }
@@ -153,14 +154,13 @@ export default {
           this.setScrollAffixScrolling();
         }
 
-        if ((this.scrollingUp && this.currentScrollAffix === 'scrollaffix-down') ||
-            (this.scrollingDown && this.currentScrollAffix === 'scrollaffix-up')) {
+        if ((this.scrollingUp && this.currentScrollAffix === 'scrollaffix-down')
+          || (this.scrollingDown && this.currentScrollAffix === 'scrollaffix-up')) {
           this.setScrollAffixScrolling();
         }
 
-        if (this.scrollingUp &&
-            this.currentScrollAffix === 'scrollaffix-up' &&
-            this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
+        if (this.scrollingUp && this.currentScrollAffix === 'scrollaffix-up'
+              && this.distanceFromTop < this.relativeElmOffsetTop - this.offset.top) {
           this.setScrollAffixTop();
         }
 
@@ -174,14 +174,14 @@ export default {
         this.setAffixTop();
       }
 
-      if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top &&
-          this.relativeElmBottomPos - this.offset.bottom >=
-          this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+      if (this.distanceFromTop >= this.relativeElmOffsetTop - this.offset.top
+        && this.relativeElmBottomPos - this.offset.bottom
+        >= this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
         this.setAffix();
       }
 
-      if (this.relativeElmBottomPos - this.offset.bottom <
-          this.distanceFromTop + this.topPadding + this.affixHeight + this.offset.top) {
+      if (this.relativeElmBottomPos - this.offset.bottom < this.distanceFromTop
+        + this.topPadding + this.affixHeight + this.offset.top) {
         this.setAffixBottom();
       }
 
@@ -195,8 +195,8 @@ export default {
     initScrollAffix() {
       if (this.distanceFromTop < this.affixInitialTop - this.offset.top) {
         this.setScrollAffixTop();
-      } else if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom &&
-          this.screenBottomPos < this.relativeElmBottomPos) {
+      } else if (this.screenBottomPos >= this.affixBottomPos + this.offset.bottom
+        && this.screenBottomPos < this.relativeElmBottomPos) {
         this.setScrollAffixDown();
       } else if (this.screenBottomPos >= this.relativeElmBottomPos) {
         this.setScrollAffixBottom();
@@ -323,8 +323,8 @@ export default {
      */
     setAffixBottom() {
       this.currentState = 'affix-bottom';
-      this.$el.style.top = `${this.relativeElement.offsetHeight - this.affixHeight -
-        this.offset.bottom - this.topPadding}px`;
+      this.$el.style.top = `${this.relativeElement.offsetHeight - this.affixHeight
+        - this.offset.bottom - this.topPadding}px`;
 
       if (this.currentState !== this.lastState) {
         this.emitEvent();
