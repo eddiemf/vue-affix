@@ -14,7 +14,7 @@ export default {
      * the window reaches the relative element.
      *
      * @example '#contact'
-     * @type {String}
+     * @type {string}
      */
     relativeElementSelector: {
       type: String,
@@ -35,14 +35,23 @@ export default {
           bottom: 40,
         };
       },
+      validator(offset) {
+        if (typeof offset !== 'object') {
+          return false;
+        }
+
+        const keys = Object.keys(offset);
+
+        return keys.includes('top') && keys.includes('bottom');
+      },
     },
 
     /**
      * Checks if the plugin should be enabled/disabled based
-     * on true/false, good for conditional rendering like
+     * on true/false. Good for conditional rendering like
      * mobile behavior.
      *
-     * @type {Boolean}
+     * @type {boolean}
      */
     enabled: {
       type: Boolean,
@@ -55,7 +64,7 @@ export default {
      * affixed to the top until it reaches the end of the
      * relative element.
      *
-     * @type {Boolean}
+     * @type {boolean}
      */
     scrollAffix: {
       type: Boolean,
@@ -79,6 +88,7 @@ export default {
       affixHeight: null,
       affixBottomPos: null,
       affixRect: null,
+      affixInitialTop: null,
       relativeElmBottomPos: null,
       relativeElmOffsetTop: null,
       topPadding: null,
@@ -93,7 +103,7 @@ export default {
   },
 
   methods: {
-    setDynamicVariables() {
+    updateData() {
       this.distanceFromTop = window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
@@ -111,9 +121,12 @@ export default {
         return;
       }
 
-      this.setDynamicVariables();
+      this.updateData();
 
-      if (this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight) {
+      const affixIsBiggerThanRelativeElement = this.affixHeight + this.offset.top
+        >= this.relativeElement.offsetHeight;
+
+      if (affixIsBiggerThanRelativeElement) {
         return;
       }
 
@@ -121,7 +134,9 @@ export default {
     },
 
     handleAffix() {
-      if (this.scrollAffix && this.affixHeight > window.innerHeight) {
+      const shouldUseScrollAffix = this.scrollAffix && this.affixHeight > window.innerHeight;
+
+      if (shouldUseScrollAffix) {
         this.setScrollingDirection();
 
         if (this.currentScrollAffix === 'scrollaffix-top') {
@@ -379,7 +394,7 @@ export default {
     this.affixInitialTop = this.getOffsetTop(this.$el);
     this.topPadding = this.affixInitialTop - this.getOffsetTop(this.relativeElement);
 
-    this.setDynamicVariables();
+    this.updateData();
 
     if (this.scrollAffix) this.initScrollAffix();
 
