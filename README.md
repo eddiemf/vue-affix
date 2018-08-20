@@ -5,19 +5,36 @@ Unlike other plugins, this Vue 2 component will make it easy to affix any elemen
  - Only needs 3 super simple configuration steps
  - Dispatches events for affix tracking
  - No dependencies
- - Uses pure JS!
 
-Make sure to check the <a href="https://eddiemf.github.io/vue-affix/examples/example-1.html" target="_blank">demo</a> to see how it works!
+Make sure to check the <a href="https://eddiemf.github.io/vue-affix-demo/" target="_blank">demo</a> to see how it works!
 
 ## Installation
-Install via npm and use it as a vue plugin in your app:
-
+First install it using:
 ```bash
 npm install --save vue-affix
 ```
+or
+```bash
+yarn add vue-affix
+```
+
+
+Then you can either use it as a plugin:
+
 ```js
-var VueAffix = require('vue-affix');
-Vue.use(VueAffix);
+import Affix from 'vue-affix';
+Vue.use(Affix);
+```
+
+or you can use it as a component (note the curly braces):
+```js
+import { Affix } from 'vue-affix';
+
+export default {
+  components: {
+    Affix,
+  },
+};
 ```
 
 Or if you wish to include it in a `script` tag, just include the `vue-affix.min.js` file located in the `dist` folder as so:
