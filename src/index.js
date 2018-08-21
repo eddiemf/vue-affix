@@ -12,4 +12,5 @@ if (typeof window !== 'undefined' && window.Vue) {
   Plugin.install(window.Vue);
 }
 
+export { Affix };
 export default Plugin;
