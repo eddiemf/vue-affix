@@ -159,7 +159,7 @@ export default {
     onScroll() {
       if (!this.enabled) {
         this.removeClasses();
-
+        
         return;
       }
 
@@ -169,6 +169,12 @@ export default {
         >= this.relativeElement.offsetHeight;
 
       if (affixIsBiggerThanRelativeElement) {
+        if (this.scrollAffix && this.currentScrollAffix !== 'scrollaffix-top') {
+          this.setScrollAffixTop();
+        } else if (this.currentState !== 'affix-top') {
+          this.setAffixTop();
+        }
+        
         return;
       }
 
