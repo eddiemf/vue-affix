@@ -140,6 +140,14 @@ export default {
     };
   },
 
+  watch: {
+    offset(val, oldVal) {
+      if (val.top !== oldVal.top || val.bottom !== oldVal.bottom) {
+        this.onScroll();
+      }
+    },
+  },
+
   methods: {
     updateData() {
       this.topOfScreen = window.pageYOffset;
