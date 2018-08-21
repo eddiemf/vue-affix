@@ -70,6 +70,18 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    /**
+     * Sets the scrollable container to use in scroll position
+     * calculations. If not set, the window object will be
+     * used by default.
+     *
+     * @type {Object}
+     */
+    scrollContainerSelector: {
+      type: String,
+      default: null,
+    },
   },
 
   computed: {
@@ -82,6 +94,20 @@ export default {
       return document.querySelector(this.relativeElementSelector);
     },
 
+    /**
+     * Computes the scroll container selector to an element.
+     * Defaults to the window object.
+     *
+     * @return {Element}
+     */
+    scrollContainer() {
+      if (this.scrollContainerSelector) {
+        return document.querySelector(this.scrollContainerSelector);
+      }
+
+      return window;
+    },
+
     affixTopPos() {
       return this.affixRect.top + this.topOfScreen - this.offset.top - this.topPadding;
     },
@@ -91,7 +117,7 @@ export default {
     },
 
     bottomOfScreen() {
-      return this.topOfScreen + window.innerHeight;
+      return this.topOfScreen + this.scrollContainer.innerHeight;
     },
 
     relativeElmTopPos() {
@@ -133,8 +159,8 @@ export default {
       lastState: null,
       currentState: null,
       currentScrollAffix: null,
-      topOfScreen: window.pageYOffset,
-      lastDistanceFromTop: window.pageYOffset,
+      topOfScreen: null,
+      lastDistanceFromTop: null,
       scrollingUp: null,
       scrollingDown: null,
     };
@@ -150,7 +176,7 @@ export default {
 
   methods: {
     updateData() {
-      this.topOfScreen = window.pageYOffset;
+      this.topOfScreen = this.scrollContainer.scrollTop || window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
@@ -159,7 +185,7 @@ export default {
     onScroll() {
       if (!this.enabled) {
         this.removeClasses();
-        
+
         return;
       }
 
@@ -174,12 +200,13 @@ export default {
         } else if (this.currentState !== 'affix-top') {
           this.setAffixTop();
         }
-        
+
         return;
       }
 
       const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
-      const shouldUseScrollAffix = this.scrollAffix && affixTotalHeight > window.innerHeight;
+      const shouldUseScrollAffix = this.scrollAffix
+        && affixTotalHeight > this.scrollContainer.innerHeight;
 
       if (shouldUseScrollAffix) {
         this.handleScrollAffix();
@@ -431,11 +458,11 @@ export default {
     if (this.scrollAffix) this.initScrollAffix();
 
     this.onScroll();
-    window.addEventListener('scroll', this.onScroll);
+    this.scrollContainer.addEventListener('scroll', this.onScroll);
   },
 
   beforeDestroy() {
-    window.removeEventListener('scroll', this.onScroll);
+    this.scrollContainer.removeEventListener('scroll', this.onScroll);
   },
 };
 </script>

@@ -137,6 +137,18 @@ enabled: {
 scrollAffix: {
   type: Boolean,
   default: false
+},
+
+/**
+ * Sets the scrollable container to use in scroll position
+ * calculations. If not set, the window object will be
+ * used by default.
+ *
+ * @type {Object}
+ */
+scrollContainerSelector: {
+  type: String,
+  default: null,
 }
 ```
 
