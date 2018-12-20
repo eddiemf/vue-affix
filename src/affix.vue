@@ -180,6 +180,7 @@ export default {
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
+      this.affixInitialTop = this.getOffsetTop(this.$el);
     },
 
     onScroll() {
