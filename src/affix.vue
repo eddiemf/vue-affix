@@ -151,6 +151,7 @@ export default {
 
   data() {
     return {
+      frameId: null,
       affixHeight: null,
       affixRect: null,
       affixInitialTop: null,
@@ -180,6 +181,17 @@ export default {
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
+    },
+
+    handleScroll() {
+      if (this.frameId) {
+        return;
+      }
+
+      this.frameId = window.requestAnimationFrame(() => {
+        this.onScroll();
+        this.frameId = null;
+      });
     },
 
     onScroll() {
@@ -458,11 +470,11 @@ export default {
     if (this.scrollAffix) this.initScrollAffix();
 
     this.onScroll();
-    this.scrollContainer.addEventListener('scroll', this.onScroll);
+    this.scrollContainer.addEventListener('scroll', this.handleScroll);
   },
 
   beforeDestroy() {
-    this.scrollContainer.removeEventListener('scroll', this.onScroll);
+    this.scrollContainer.removeEventListener('scroll', this.handleScroll);
   },
 };
 </script>
