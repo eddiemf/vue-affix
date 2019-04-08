@@ -14,12 +14,16 @@ body {
 
 .sidebar-menu {
   width: 318px;
+}
 
-  @media screen and (max-width: 1383px) {
+@media screen and (max-width: 1383px) {
+  .sidebar-menu {
     width: 270px;
   }
+}
 
-  @media screen and (max-width: 1191px) {
+@media screen and (max-width: 1191px) {
+  .sidebar-menu {
     width: 222px;
   }
 }
@@ -27,12 +31,16 @@ body {
 .scrollaffix-sidebar {
   width: 204px;
   font-size: 14px;
+}
 
-  @media screen and (max-width: 1383px) {
+@media screen and (max-width: 1383px) {
+  .scrollaffix-sidebar {
     width: 170px;
   }
+}
 
-  @media screen and (max-width: 1191px) {
+@media screen and (max-width: 1191px) {
+  .scrollaffix-sidebar {
     width: 140px;
     font-size: 12px;
   }
