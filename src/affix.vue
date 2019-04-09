@@ -467,7 +467,13 @@ export default {
 
     this.updateData();
 
-    if (this.scrollAffix) this.initScrollAffix();
+    if (this.scrollAffix) {
+      const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
+      const shouldUseScrollAffix = this.scrollAffix
+        && affixTotalHeight > this.scrollContainer.innerHeight;
+
+      if (shouldUseScrollAffix) this.initScrollAffix();
+    }
 
     this.onScroll();
     this.scrollContainer.addEventListener('scroll', this.handleScroll);
