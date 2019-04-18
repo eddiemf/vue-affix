@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
@@ -83,6 +83,24 @@ export default {
       default: null,
     },
   },
+  
+  data() {
+    return {
+      frameId: null,
+      affixHeight: null,
+      affixRect: null,
+      affixInitialTop: null,
+      relativeElmOffsetTop: null,
+      topPadding: null,
+      lastState: null,
+      currentState: null,
+      currentScrollAffix: null,
+      topOfScreen: null,
+      lastDistanceFromTop: null,
+      scrollingUp: null,
+      scrollingDown: null,
+    };
+  },
 
   computed: {
     /**
@@ -149,30 +167,36 @@ export default {
     },
   },
 
-  data() {
-    return {
-      frameId: null,
-      affixHeight: null,
-      affixRect: null,
-      affixInitialTop: null,
-      relativeElmOffsetTop: null,
-      topPadding: null,
-      lastState: null,
-      currentState: null,
-      currentScrollAffix: null,
-      topOfScreen: null,
-      lastDistanceFromTop: null,
-      scrollingUp: null,
-      scrollingDown: null,
-    };
-  },
-
   watch: {
     offset(val, oldVal) {
       if (val.top !== oldVal.top || val.bottom !== oldVal.bottom) {
         this.onScroll();
       }
     },
+  },
+  
+  mounted() {
+    this.$el.classList.add('vue-affix');
+    this.affixInitialTop = this.getOffsetTop(this.$el);
+    this.topPadding = this.affixInitialTop - this.getOffsetTop(this.relativeElement);
+
+    this.updateData();
+
+    if (this.scrollAffix) {
+      const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
+      const shouldUseScrollAffix = this.scrollAffix
+        && affixTotalHeight > this.scrollContainer.innerHeight;
+
+      if (shouldUseScrollAffix) this.initScrollAffix();
+    }
+
+    this.onScroll();
+    this.scrollContainer.addEventListener('scroll', this.handleScroll);
+  },
+  
+  
+  beforeDestroy() {
+    this.scrollContainer.removeEventListener('scroll', this.handleScroll);
   },
 
   methods: {
@@ -458,29 +482,6 @@ export default {
 
       return yPosition;
     },
-  },
-
-  mounted() {
-    this.$el.classList.add('vue-affix');
-    this.affixInitialTop = this.getOffsetTop(this.$el);
-    this.topPadding = this.affixInitialTop - this.getOffsetTop(this.relativeElement);
-
-    this.updateData();
-
-    if (this.scrollAffix) {
-      const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
-      const shouldUseScrollAffix = this.scrollAffix
-        && affixTotalHeight > this.scrollContainer.innerHeight;
-
-      if (shouldUseScrollAffix) this.initScrollAffix();
-    }
-
-    this.onScroll();
-    this.scrollContainer.addEventListener('scroll', this.handleScroll);
-  },
-
-  beforeDestroy() {
-    this.scrollContainer.removeEventListener('scroll', this.handleScroll);
   },
 };
 </script>
