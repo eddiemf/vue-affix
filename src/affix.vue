@@ -453,10 +453,9 @@ export default {
      */
     emitEvent() {
       if (this.scrollAffix && this.currentScrollAffix
-        && this.lastScrollAffixState
         && this.currentScrollAffix !== this.lastScrollAffixState) {
         this.$emit(this.currentScrollAffix.replace('-', ''));
-      } else if (this.lastState && this.currentState &&
+      } else if (this.currentState &&
         this.currentState !== this.lastState) {
         this.$emit(this.currentState.replace('-', ''));
       }
