@@ -72,12 +72,15 @@
           </div>
 
           <aside class="column is-2">
-            <affix class="scrollaffix-sidebar" relative-element-selector="#example-content" :offset="{ top: 30, bottom: 40 }" :scroll-affix="true">
+            <affix ref="scrollAffix" class="scrollaffix-sidebar" relative-element-selector="#example-content" :offset="{ top: 30, bottom: 40 }" :scroll-affix="true">
               <div class="card">
                 <header class="card-header">
                   <p class="card-header-title heading">Scroll Affix sidebar</p>
+                  <button type="button" @click="toggleContent">
+                    Toggle Dynamic Content
+                  </button>
                 </header>
-                <div class="card-content">
+                <div class="card-content" v-if="showMore">
                   <div class="content">
                     <p>This is the scroll affix aside with some markup text to make it taller than the viewport height.</p>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Hic deleniti laudantium qui repudiandae ad, et excepturi voluptate illo ea quibusdam, temporibus, cupiditate dolore adipisci aliquid itaque incidunt odio minus quaerat.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem velit debitis consequuntur, enim ipsum veritatis. Totam perferendis, mollitia vitae numquam iste magnam, quidem eveniet repellat possimus, repellendus, qui minima ab?</p>

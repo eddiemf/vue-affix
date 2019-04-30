@@ -63,6 +63,13 @@ Example below:
 
 This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that. Just don't forget to set the width to `.vue-affix` class! It will probably cause unexpected behavior if you don't set it!
 
+If the height of the affixed content changes you should call onScroll to refresh the element
+```javascript
+Vue.nextTick(() => {
+  this.$refs.scrollAffix.onScroll();
+});
+```
+
 ## How the plugin works
 It works similar to Bootstrap's Affix plugin, it will add 3 classes (`.affix-top`, `.affix` and `.affix-bottom`) to the affixed element while you scroll the page.
 
