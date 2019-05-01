@@ -148,14 +148,14 @@ export default {
       return !this.screenIsBeforeRelativeElm && !this.screenIsPastRelativeElm;
     },
 
-    shouldUseScrollAffix () {
+    shouldUseScrollAffix() {
       const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
       return this.scrollAffix && affixTotalHeight > this.scrollContainer.innerHeight;
     },
 
-    affixIsBiggerThanRelativeElement () {
+    affixIsBiggerThanRelativeElement() {
       return this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight;
-    }
+    },
   },
 
   data() {
@@ -173,7 +173,7 @@ export default {
       lastDistanceFromTop: null,
       scrollingUp: null,
       scrollingDown: null,
-      mode: 'affix'
+      mode: 'affix',
     };
   },
 
@@ -243,8 +243,7 @@ export default {
           this.setAffixBottom();
         }
       }
-      
-      this.lastState = this.currentState; 
+      this.lastState = this.currentState;
     },
 
     handleScrollAffix() {
@@ -252,24 +251,22 @@ export default {
 
       if (this.affixIsBiggerThanRelativeElement) {
         this.setScrollAffixTop();
-      } else {
-        if (this.screenIsBeforeRelativeElm) {
-          this.setScrollAffixTop();
-        } else if (this.screenIsPastRelativeElm) {
-          this.setScrollAffixBottom();
-        } else if (this.screenIsInsideRelativeElm) {
-          const shouldSetAffixScrolling = (this.currentScrollAffix === 'scrollaffix-top')
-            || (this.currentScrollAffix === 'scrollaffix-bottom')
-            || (this.currentScrollAffix === 'scrollaffix-up' && this.scrollingDown)
-            || (this.currentScrollAffix === 'scrollaffix-down' && this.scrollingUp);
+      } else if (this.screenIsBeforeRelativeElm) {
+        this.setScrollAffixTop();
+      } else if (this.screenIsPastRelativeElm) {
+        this.setScrollAffixBottom();
+      } else if (this.screenIsInsideRelativeElm) {
+        const shouldSetAffixScrolling = (this.currentScrollAffix === 'scrollaffix-top')
+          || (this.currentScrollAffix === 'scrollaffix-bottom')
+          || (this.currentScrollAffix === 'scrollaffix-up' && this.scrollingDown)
+          || (this.currentScrollAffix === 'scrollaffix-down' && this.scrollingUp);
 
-          if (this.screenIsBeforeAffix && this.scrollingUp) {
-            this.setScrollAffixUp();
-          } else if (this.screenIsPastAffix && this.scrollingDown) {
-            this.setScrollAffixDown();
-          } else if (shouldSetAffixScrolling) {
-            this.setScrollAffixScrolling();
-          }
+        if (this.screenIsBeforeAffix && this.scrollingUp) {
+          this.setScrollAffixUp();
+        } else if (this.screenIsPastAffix && this.scrollingDown) {
+          this.setScrollAffixDown();
+        } else if (shouldSetAffixScrolling) {
+          this.setScrollAffixScrolling();
         }
       }
 
@@ -297,7 +294,7 @@ export default {
      * Sets the current mode of the plugin
      * this will initalize scroll affix automatically.
      */
-    setMode (mode) {
+    setMode(mode) {
       if (this.mode !== mode) {
         this.mode = mode;
         if (mode === 'affix') {
@@ -455,8 +452,8 @@ export default {
       if (this.scrollAffix && this.currentScrollAffix
         && this.currentScrollAffix !== this.lastScrollAffixState) {
         this.$emit(this.currentScrollAffix.replace('-', ''));
-      } else if (this.currentState &&
-        this.currentState !== this.lastState) {
+      } else if (this.currentState
+        && this.currentState !== this.lastState) {
         this.$emit(this.currentState.replace('-', ''));
       }
     },
