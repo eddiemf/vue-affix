@@ -383,7 +383,7 @@ export default {
       if (this.topOfScreen > this.lastDistanceFromTop) {
         this.scrollingDown = true;
         this.scrollingUp = false;
-      } else {
+      } else if (this.topOfScreen < this.lastDistanceFromTop) {
         this.scrollingUp = true;
         this.scrollingDown = false;
       }
