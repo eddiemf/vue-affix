@@ -121,23 +121,23 @@ export default {
     },
 
     relativeElmTopPos() {
-      return this.topOfScreen + this.relativeElement.getBoundingClientRect().top;
+      return this.topOfScreen + this.relativeElmRect.top;
     },
 
     relativeElmBottomPos() {
-      return this.topOfScreen + this.relativeElement.getBoundingClientRect().bottom;
-    },
-
-    screenIsPastAffix() {
-      return this.bottomOfScreen >= this.affixBottomPos;
-    },
-
-    screenIsBeforeAffix() {
-      return this.topOfScreen <= this.affixTopPos;
+      return this.topOfScreen + this.relativeElmRect.bottom;
     },
 
     screenIsBeforeRelativeElm() {
       return this.topOfScreen <= this.relativeElmTopPos - this.offset.top;
+    },
+
+    screenIsPastAffix() {
+      return this.bottomOfScreen - this.offset.bottom >= this.affixBottomPos;
+    },
+
+    screenIsBeforeAffix() {
+      return this.topOfScreen <= this.affixTopPos;
     },
 
     screenIsPastRelativeElm() {
@@ -149,12 +149,25 @@ export default {
     },
 
     shouldUseScrollAffix() {
-      const affixTotalHeight = this.affixHeight + this.offset.bottom + this.offset.top;
+      /**
+       * Element Height is needed when content is affixed bottom in affix mode
+       * Then the content dynamically grows but the height is fixed due
+       * to the top / bottom style constrains
+       */
+      let elementHeight = this.affixHeight;
+      if (this.mode === 'affix' && this.$el.style.top && this.$el.style.bottom) {
+        for (let i = 0; i < this.$el.children.length; i += 1) {
+          if (this.$el.children[i].offsetHeight > elementHeight) {
+            elementHeight = this.$el.children[i].offsetHeight;
+          }
+        }
+      }
+      const affixTotalHeight = elementHeight + this.offset.bottom + this.offset.top;
       return this.scrollAffix && affixTotalHeight > this.scrollContainer.innerHeight;
     },
 
     affixIsBiggerThanRelativeElement() {
-      return this.affixHeight + this.offset.top >= this.relativeElement.offsetHeight;
+      return this.affixHeight >= this.relativeElmRect.height;
     },
   },
 
@@ -165,6 +178,7 @@ export default {
       affixRect: null,
       affixInitialTop: null,
       relativeElmOffsetTop: null,
+      relativeElmRect: null,
       topPadding: null,
       lastState: null,
       currentState: null,
@@ -189,6 +203,7 @@ export default {
     updateData() {
       this.topOfScreen = this.scrollContainer.scrollTop || window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
+      this.relativeElmRect = this.relativeElement.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
     },
@@ -224,6 +239,26 @@ export default {
       this.handleAffix();
     },
 
+    setMode(mode) {
+      if (this.mode !== mode) {
+        this.mode = mode;
+        if (mode === 'affix') {
+          this.currentScrollAffix = null;
+          this.lastScrollAffixState = null;
+          this.removeClasses();
+          this.updateData();
+        } else if (mode === 'scrollAffix') {
+          this.currentState = null;
+          this.lastState = null;
+          this.removeClasses();
+          this.$el.style.top = 'auto';
+          this.$el.style.bottom = 'auto';
+          this.updateData();
+          this.initScrollAffix();
+        }
+      }
+    },
+
     handleAffix() {
       if (this.affixIsBiggerThanRelativeElement) {
         this.setAffixTop();
@@ -243,12 +278,12 @@ export default {
           this.setAffixBottom();
         }
       }
+
       this.lastState = this.currentState;
     },
 
     handleScrollAffix() {
       this.setScrollingDirection();
-
       if (this.affixIsBiggerThanRelativeElement) {
         this.setScrollAffixTop();
       } else if (this.screenIsBeforeRelativeElm) {
@@ -287,24 +322,6 @@ export default {
         this.setScrollAffixBottom();
       } else {
         this.setScrollAffixScrolling();
-      }
-    },
-
-    /**
-     * Sets the current mode of the plugin
-     * this will initalize scroll affix automatically.
-     */
-    setMode(mode) {
-      if (this.mode !== mode) {
-        this.mode = mode;
-        if (mode === 'affix') {
-          this.currentScrollAffix = null;
-          this.lastScrollAffixState = null;
-        } else if (mode === 'scrollAffix') {
-          this.currentState = null;
-          this.lastState = null;
-          this.initScrollAffix();
-        }
       }
     },
 
@@ -450,9 +467,9 @@ export default {
      */
     emitEvent() {
       if (this.scrollAffix && this.currentScrollAffix
-        && this.currentScrollAffix !== this.lastScrollAffixState) {
+        && this.lastScrollAffixState && this.currentScrollAffix !== this.lastScrollAffixState) {
         this.$emit(this.currentScrollAffix.replace('-', ''));
-      } else if (this.currentState
+      } else if (this.lastState && this.currentState
         && this.currentState !== this.lastState) {
         this.$emit(this.currentState.replace('-', ''));
       }
