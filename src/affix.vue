@@ -113,7 +113,7 @@ export default {
     },
 
     affixBottomPos() {
-      return this.affixRect.bottom + this.topOfScreen + this.offset.bottom;
+      return Math.round(this.affixRect.bottom) + this.topOfScreen + this.offset.bottom;
     },
 
     bottomOfScreen() {
@@ -140,30 +140,26 @@ export default {
       return this.topOfScreen <= this.affixTopPos;
     },
 
+    affixIsBelowRelativeElm() {
+      if (this.currentScrollAffix === 'scrollaffix-scrolling') {
+        return this.affixBottomPos > this.relativeElmBottomPos - this.offset.bottom;
+      }
+      return this.affixBottomPos > this.relativeElmBottomPos;
+    },
+
+    affixIsAboveBottomOfScreen() {
+      if (this.currentScrollAffix === 'scrollaffix-scrolling') {
+        return this.bottomOfScreen - this.offset.bottom > this.affixBottomPos;
+      }
+      return this.bottomOfScreen > this.affixBottomPos;
+    },
+
     screenIsPastRelativeElm() {
       return this.bottomOfScreen >= this.relativeElmBottomPos + this.offset.bottom;
     },
 
     screenIsInsideRelativeElm() {
       return !this.screenIsBeforeRelativeElm && !this.screenIsPastRelativeElm;
-    },
-
-    shouldUseScrollAffix() {
-      /**
-       * Element Height is needed when content is affixed bottom in affix mode
-       * Then the content dynamically grows but the height is fixed due
-       * to the top / bottom style constrains
-       */
-      let elementHeight = this.affixHeight;
-      if (this.mode === 'affix' && this.$el.style.top && this.$el.style.bottom) {
-        for (let i = 0; i < this.$el.children.length; i += 1) {
-          if (this.$el.children[i].offsetHeight > elementHeight) {
-            elementHeight = this.$el.children[i].offsetHeight;
-          }
-        }
-      }
-      const affixTotalHeight = elementHeight + this.offset.bottom + this.offset.top;
-      return this.scrollAffix && affixTotalHeight > this.scrollContainer.innerHeight;
     },
 
     affixIsBiggerThanRelativeElement() {
@@ -185,6 +181,8 @@ export default {
       currentScrollAffix: null,
       topOfScreen: null,
       lastDistanceFromTop: null,
+      lastAffixDistanceFromBottom: null,
+      nextScrollAffixPos: null,
       scrollingUp: null,
       scrollingDown: null,
       mode: 'affix',
@@ -200,6 +198,24 @@ export default {
   },
 
   methods: {
+    shouldUseScrollAffix() {
+      /**
+       * Element Height is needed when content is affixed bottom in affix mode
+       * Then the content dynamically grows but the height is fixed due
+       * to the top / bottom style constrains
+       */
+      let elementHeight = this.affixHeight;
+      if (this.mode === 'affix' && this.$el.style.top && this.$el.style.bottom) {
+        for (let i = 0; i < this.$el.children.length; i += 1) {
+          if (this.$el.children[i].offsetHeight > elementHeight) {
+            elementHeight = this.$el.children[i].offsetHeight;
+          }
+        }
+      }
+      const affixTotalHeight = elementHeight + this.offset.bottom + this.offset.top;
+      return this.scrollAffix && affixTotalHeight > this.scrollContainer.innerHeight;
+    },
+
     updateData() {
       this.topOfScreen = this.scrollContainer.scrollTop || window.pageYOffset;
       this.affixRect = this.$el.getBoundingClientRect();
@@ -227,8 +243,7 @@ export default {
       }
 
       this.updateData();
-
-      if (this.shouldUseScrollAffix) {
+      if (this.shouldUseScrollAffix()) {
         this.setMode('scrollAffix');
         this.handleScrollAffix();
 
@@ -246,16 +261,18 @@ export default {
           this.currentScrollAffix = null;
           this.lastScrollAffixState = null;
           this.removeClasses();
-          this.updateData();
         } else if (mode === 'scrollAffix') {
           this.currentState = null;
           this.lastState = null;
+          this.nextScrollAffixPos = null;
+          this.lastAffixDistanceFromBottom = null;
           this.removeClasses();
           this.$el.style.top = 'auto';
           this.$el.style.bottom = 'auto';
           this.updateData();
           this.initScrollAffix();
         }
+        this.updateData();
       }
     },
 
@@ -286,6 +303,8 @@ export default {
       this.setScrollingDirection();
       if (this.affixIsBiggerThanRelativeElement) {
         this.setScrollAffixTop();
+      } else if (this.affixIsBelowRelativeElm) {
+        this.repositionAffixedContent();
       } else if (this.screenIsBeforeRelativeElm) {
         this.setScrollAffixTop();
       } else if (this.screenIsPastRelativeElm) {
@@ -300,6 +319,8 @@ export default {
           this.setScrollAffixUp();
         } else if (this.screenIsPastAffix && this.scrollingDown) {
           this.setScrollAffixDown();
+        } else if (this.affixIsAboveBottomOfScreen) {
+          this.repositionAffixedContent();
         } else if (shouldSetAffixScrolling) {
           this.setScrollAffixScrolling();
         }
@@ -307,6 +328,11 @@ export default {
 
       this.lastScrollAffixState = this.currentScrollAffix;
       this.lastDistanceFromTop = this.topOfScreen;
+      if (this.lastScrollAffixState !== 'scrollaffix-scrolling') {
+        this.lastAffixDistanceFromBottom = Math.floor(this.affixBottomPos);
+      }
+      this.nextScrollAffixPos = Math.floor(this.affixRect.top)
+        + this.topOfScreen - this.affixInitialTop;
     },
 
     /**
@@ -326,12 +352,16 @@ export default {
     },
 
     /**
-     * Sets the currentScrollAffix to 'scrolling' to indicate that
+     * Sets te currentScrollAffix to 'scrolling' to indicate that
      * the window is scrolling inside the affixed element.
      */
     setScrollAffixScrolling() {
       this.currentScrollAffix = 'scrollaffix-scrolling';
-      this.$el.style.top = `${(Math.floor(this.affixRect.top) + this.topOfScreen) - this.affixInitialTop}px`;
+      if (this.nextScrollAffixPos === null) {
+        this.nextScrollAffixPos = Math.floor(this.affixRect.top)
+          + this.topOfScreen - this.affixInitialTop;
+      }
+      this.$el.style.top = `${this.nextScrollAffixPos}px`;
       this.$el.style.bottom = 'auto';
       this.removeClasses();
       this.emitEvent();
@@ -454,6 +484,16 @@ export default {
     },
 
     /**
+     * Scrolls the window up to fit the affixed content.
+     */
+    repositionAffixedContent() {
+      const diff = this.lastAffixDistanceFromBottom - this.affixBottomPos - this.offset.bottom;
+      this.nextScrollAffixPos = Math.floor(this.affixRect.top)
+        + this.topOfScreen - this.affixInitialTop + diff;
+      this.setScrollAffixScrolling();
+    },
+
+    /**
      * Removes all three affix classes.
      */
     removeClasses() {
@@ -501,7 +541,7 @@ export default {
 
     this.updateData();
 
-    if (this.shouldUseScrollAffix) this.setMode('scrollAffix');
+    if (this.shouldUseScrollAffix()) this.setMode('scrollAffix');
 
     this.onScroll();
     this.scrollContainer.addEventListener('scroll', this.handleScroll);
