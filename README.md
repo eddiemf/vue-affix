@@ -61,7 +61,23 @@ Example below:
 </section>
 ```
 
-This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that. Just don't forget to set the width to `.vue-affix` class! It will probably cause unexpected behavior if you don't set it!
+This will make the `.sidebar-menu` element stay fixed while in the `#example-content` element viewport. Simple as that. Just don't forget to set the width to the `.vue-affix` class!
+
+## Alternative usage: dynamic width
+
+If you do not want to set the width, you can specify a reference element to let `vue-affix` automatically determine the width based on the reference element. For e.g. :
+```html
+<div id="affix-sidebar-width-reference"></div>
+<affix class="sidebar-menu" relative-element-selector="#example-content" width-reference-selector="#affix-sidebar-width-reference">
+  <a href="#markup-1">Markup 1</a>
+  <a href="#markup-2">Markup 2</a>
+  <a href="#markup-3">Markup 3</a>
+</affix>
+<section id="example-content">
+  <p>This is the #example-content section which the sidebar will be relatively affixed!</p>
+</section>
+```
+**However, there is a drawback**: `vue-affix` watches scroll events only, so you have to scroll again when the reference element changes.
 
 ## How the plugin works
 It works similar to Bootstrap's Affix plugin, it will add 3 classes (`.affix-top`, `.affix` and `.affix-bottom`) to the affixed element while you scroll the page.
@@ -144,12 +160,22 @@ scrollAffix: {
  * calculations. If not set, the window object will be
  * used by default.
  *
- * @type {Object}
+ * @type {?string}
  */
 scrollContainerSelector: {
   type: String,
   default: null,
-}
+},
+
+/**
+ * If specified, sets the width matching to the given element.
+ *
+ * @type {?string}
+ */
+widthReferenceSelector: {
+  type: String,
+  default: null
+},
 ```
 
 ## Events

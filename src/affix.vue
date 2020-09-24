@@ -76,12 +76,22 @@ export default {
      * calculations. If not set, the window object will be
      * used by default.
      *
-     * @type {Object}
+     * @type {?string}
      */
     scrollContainerSelector: {
       type: String,
       default: null,
     },
+
+    /**
+     * If specified, sets the width matching to the given element.
+     *
+     * @type {?string}
+     */
+    widthReferenceSelector: {
+      type: String,
+      default: null
+    }
   },
 
   computed: {
@@ -106,6 +116,21 @@ export default {
       }
 
       return window;
+    },
+
+    /**
+     * Computes the width reference selector to an element.
+     *
+     * @return {?Element}
+     */
+    widthReference() {
+      if (this.widthReferenceSelector) {
+        return document.querySelector(this.widthReferenceSelector);
+      } else if (this.$el instanceof Element) {
+        return this.$el;
+      }
+
+      return null;
     },
 
     affixTopPos() {
@@ -155,6 +180,7 @@ export default {
       affixHeight: null,
       affixRect: null,
       affixInitialTop: null,
+      width: null,
       relativeElmOffsetTop: null,
       topPadding: null,
       lastState: null,
@@ -178,6 +204,7 @@ export default {
   methods: {
     updateData() {
       this.topOfScreen = this.scrollContainer.scrollTop || window.pageYOffset;
+      this.width = this.getWidth(this.widthReference);
       this.affixRect = this.$el.getBoundingClientRect();
       this.affixHeight = this.$el.offsetHeight;
       this.relativeElmOffsetTop = this.getOffsetTop(this.relativeElement);
@@ -296,6 +323,8 @@ export default {
      */
     setScrollAffixScrolling() {
       this.currentScrollAffix = 'scrollaffix-scrolling';
+      if(this.widthReferenceSelector)
+        this.$el.style.width = `${this.width}px`;
       this.$el.style.top = `${(Math.floor(this.affixRect.top) + this.topOfScreen) - this.affixInitialTop}px`;
       this.$el.style.bottom = 'auto';
       this.removeClasses();
@@ -310,6 +339,8 @@ export default {
       this.currentScrollAffix = 'scrollaffix-up';
 
       if (this.currentScrollAffix !== this.lastScrollAffixState) {
+        if(this.widthReferenceSelector)
+          this.$el.style.width = `${this.width}px`;
         this.$el.style.top = `${this.topPadding + this.offset.top}px`;
         this.$el.style.bottom = 'auto';
         this.removeClasses();
@@ -326,6 +357,8 @@ export default {
       this.currentScrollAffix = 'scrollaffix-down';
 
       if (this.currentScrollAffix !== this.lastScrollAffixState) {
+        if(this.widthReferenceSelector)
+          this.$el.style.width = `${this.width}px`;
         this.$el.style.bottom = `${this.offset.bottom}px`;
         this.$el.style.top = 'auto';
         this.removeClasses();
@@ -340,6 +373,8 @@ export default {
      */
     setScrollAffixTop() {
       this.currentScrollAffix = 'scrollaffix-top';
+      if(this.widthReferenceSelector)
+        this.$el.style.width = `${this.width}px`;
       this.$el.style.top = 0;
       this.$el.style.bottom = 'auto';
       this.removeClasses();
@@ -352,6 +387,8 @@ export default {
      */
     setScrollAffixBottom() {
       this.currentScrollAffix = 'scrollaffix-bottom';
+      if(this.widthReferenceSelector)
+        this.$el.style.width = `${this.width}px`;
       this.$el.style.top = `${this.relativeElmBottomPos - this.affixInitialTop - this.affixHeight}px`;
       this.$el.style.bottom = 'auto';
       this.removeClasses();
@@ -395,6 +432,9 @@ export default {
       this.currentState = 'affix';
       this.$el.style.top = `${this.topPadding + this.offset.top}px`;
 
+      if(this.widthReferenceSelector)
+        this.$el.style.width = `${this.width}px`;
+
       if (this.currentState !== this.lastState) {
         this.emitEvent();
         this.removeClasses();
@@ -410,6 +450,9 @@ export default {
       this.currentState = 'affix-bottom';
       this.$el.style.top = `${this.relativeElement.offsetHeight - this.affixHeight
         - this.offset.bottom - this.topPadding}px`;
+
+      if(this.widthReferenceSelector)
+        this.$el.style.width = `${this.width}px`;
 
       if (this.currentState !== this.lastState) {
         this.emitEvent();
@@ -458,11 +501,23 @@ export default {
 
       return yPosition;
     },
+
+    /**
+     * Gets the width of an element in the document.
+     *
+     * @param  {Element} element
+     * @return {Number}
+     */
+    getWidth(element) {
+      const rect = element.getBoundingClientRect();
+      return rect.width;
+    },
   },
 
   mounted() {
     this.$el.classList.add('vue-affix');
     this.affixInitialTop = this.getOffsetTop(this.$el);
+    this.width = this.getWidth(this.widthReference);
     this.topPadding = this.affixInitialTop - this.getOffsetTop(this.relativeElement);
 
     this.updateData();
