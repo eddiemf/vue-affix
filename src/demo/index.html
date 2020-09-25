@@ -18,7 +18,8 @@
       <div class="container">
         <div class="columns">
           <aside class="sidebar column is-3">
-            <affix class="menu sidebar-menu" relative-element-selector="#example-content" :offset="{ top: 30, bottom: 40 }" :scroll-affix="false">
+            <div id="affix-sidebar-width-reference"></div>
+            <affix class="menu sidebar-menu" relative-element-selector="#example-content" width-reference-selector="#affix-sidebar-width-reference" :offset="{ top: 30, bottom: 40 }" :scroll-affix="false">
               <div class="menu-label">
                 <h2>Affix sidebar</h2>
               </div>
